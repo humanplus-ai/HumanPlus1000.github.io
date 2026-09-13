@@ -15,7 +15,10 @@
 /* ------------------------------------------------------------------ */
 
 export const site = {
-  brand: 'HumanPlus.AI',
+  /* Shown in exactly two places: the nav's top-left wordmark and the
+     footer's bottom-left label. (site.title stays "HumanPlus1000 …" and is
+     untouched.) */
+  brand: 'HumanPlus',
   title: 'HumanPlus1000 — 1000-Hour Embodied Motion Dataset',
   description:
     'From the real world to world-human models: 1000 hours of synchronized first-person vision and whole-body motion data.',
@@ -32,8 +35,9 @@ export const nav = {
 export const footer = {
   label: 'HumanPlus1000 Dataset',
   note: 'Synchronized human embodied data for embodied intelligence research.',
-  email: 'hello@example.com',
-  copyright: `© ${new Date().getFullYear()} HumanPlus1000`,
+  email: 'info@humanplus.xyz',
+  /* Year stays dynamic — renders "© 2026 HumanPlus" this year. */
+  copyright: `© ${new Date().getFullYear()} HumanPlus`,
 }
 
 /* ------------------------------------------------------------------ */
@@ -56,10 +60,13 @@ export const datasetStats = {
   /* `accent: true` → this figure is drawn in the brand highlight.
      Only the headline "1000" is highlighted; every other figure stays
      plain white/grey so the blue remains ~10% of the page. */
-  hours: { value: '1000', unit: '', label: 'Hour', accent: true },
-  locations: { value: '100', unit: '+', label: 'Location' },
-  tasks: { value: '500', unit: '+', label: 'Task' },
-  people: { value: '200', unit: '+', label: 'People' },
+  /* The "+" belongs to the figure, so it lives in `value` and is drawn in
+     the same (bold) weight as the number. `unit` stays empty: the Chinese
+     words below are `label`, which keeps its own lighter weight. */
+  hours: { value: '1000+', unit: '', label: 'Hour', accent: true },
+  locations: { value: '100+', unit: '', label: 'Location' },
+  tasks: { value: '500+', unit: '', label: 'Task' },
+  people: { value: '200+', unit: '', label: 'People' },
 }
 
 /* ------------------------------------------------------------------ */
@@ -131,7 +138,7 @@ export const demo = {
   label: 'DEMO',
 
   /* Main title of the module — the dominant visual element */
-  title: 'LIVE CAPTURE',
+  title: 'LIFE CAPTURE',
 
   /* One-line description under the title */
   description:
@@ -143,8 +150,13 @@ export const demo = {
   /**
    * Real demo video path.
    * null → the frame renders the rectangle placeholder.
+   *
+   * Autoplayed (muted + looped + inline) whenever the frame scrolls into
+   * view — see the IntersectionObserver in DemoSection.
+   * Keep the path relative (no leading "/") so it also resolves under a
+   * GitHub Pages sub-path.
    */
-  videoSrc: 'videos/demo/V3.mp4',
+  videoSrc: 'videos/demo/HumanV4.mp4',
 }
 
 /* ------------------------------------------------------------------ */
@@ -175,9 +187,9 @@ export const overview = {
   /**
    * Real overview image path.
    * null → the frame renders the rectangle placeholder.
-   * Once the asset exists, set  'images/overview/overview.jpg'
+   * Relative (no leading "/") so it also works under a Pages sub-path.
    */
-  imageSrc: null,
+  imageSrc: 'images/overview/humanv4-cover.jpg',
 }
 
 /* ------------------------------------------------------------------ */
@@ -215,14 +227,14 @@ export const multimodal = {
       title: 'Visual Perception',
       desc: 'First-person videos capture the environment, objects, and scene dynamics.',
       tags: 'Ego Vision · Objects · Environment',
-      videoSrc: null,
+      videoSrc: 'videos/multimodal/Visual.mp4',
     },
     {
       index: '02',
       title: 'Human Motion',
       desc: 'Motion capture records full-body pose and movement trajectories.',
       tags: 'Full-body Motion · Pose · IMU',
-      videoSrc: null,
+      videoSrc: 'videos/multimodal/Motion.mp4',
     },
     {
       index: '03',
@@ -265,10 +277,11 @@ export const download = {
     /* One-line dataset summary */
     statsLine: '1000+ HOURS  ·  200+ PEOPLE  ·  500+ TASKS  ·  100+ LOCATIONS',
 
-    /* Right-side CTA. Set `url` to the real Hugging Face dataset page. */
+    /* Right-side CTA. Opens the Hugging Face dataset in a new tab
+       (DownloadSection already applies target="_blank" + rel=noopener). */
     cta: {
       label: 'ACCESS DATASET',
-      url: null,
+      url: 'https://huggingface.co/datasets/humanplus-ai/HumanPlus-1000',
     },
   },
 }

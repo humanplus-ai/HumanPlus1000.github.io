@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { demo } from '../../data/site'
 import Reveal from '../ui/Reveal'
 
@@ -6,40 +7,110 @@ import Reveal from '../ui/Reveal'
 /* ------------------------------------------------------------------ */
 
 /**
- * 16:9 frame that will hold the one-minute demo reel.
- *
- * Preserves the original behaviour: renders a real <video> with native
- * controls as soon as `demo.videoSrc` is set; until then it falls back to a
- * static rectangle placeholder. Swapping in the footage later needs no
- * layout change — only a path in site.js.
+ * Shared frame shell — 16:9, same gradient/border/overflow treatment as
+ * every other media frame on the page. Nothing here is interactive: no
+ * group-hover tint, no focus ring, no text selection, so pointing at the
+ * video cannot flash the brand blue.
  */
-function VideoFrame({ src, label }) {
+const FRAME_CLASS =
+  'relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden select-none'
+
+/**
+ * Autoplaying demo clip.
+ *
+ * - `autoPlay` + `muted` + `playsInline` + `loop`, no native controls: the
+ *   browser only allows gesture-free playback while muted, so muting is a
+ *   hard requirement, not a stylistic choice.
+ * - An IntersectionObserver plays the clip once the frame is ~25% visible
+ *   and pauses it on the way out, so it never decodes off-screen. Re-entering
+ *   the viewport fires the observer again and resumes playback.
+ * - `muted` is asserted in the effect as well: some browsers drop React's
+ *   `muted` prop on first mount, which would block autoplay and freeze the
+ *   clip on frame one.
+ */
+function AutoplayVideo({ src }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    video.muted = true
+
+    const play = () => {
+      const played = video.play()
+      if (played && typeof played.catch === 'function') played.catch(() => {})
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      play()
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) play()
+        else video.pause()
+      },
+      { threshold: 0.25 }
+    )
+    observer.observe(video)
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <div className="group relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 hover:border-brandLine">
-      {src ? (
-        <video src={src} controls playsInline className="w-full h-full object-cover" />
-      ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
-          <span className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-white/20 flex items-center justify-center text-white/60 transition-colors duration-300 group-hover:border-brandLine group-hover:text-brand">
-            <svg
-              viewBox="0 0 24 24"
-              className="w-6 h-6 md:w-7 md:h-7 translate-x-[1px]"
-              aria-hidden="true"
-            >
-              <path d="M8 5v14l11-7z" fill="currentColor" />
-            </svg>
-          </span>
-          <span className="text-xs font-mono text-mute uppercase tracking-[0.3em] transition-colors duration-300 group-hover:text-brand/70">
-            {label}
-          </span>
-        </div>
-      )}
+    <video
+      ref={videoRef}
+      src={src}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      tabIndex={-1}
+      className="h-full w-full object-cover select-none outline-none focus:outline-none"
+    />
+  )
+}
+
+/**
+ * Fallback shown while `demo.videoSrc` is null. Kept exactly as it was,
+ * including its hover treatment — the hover cleanup above targets the video
+ * area only.
+ */
+function PlaceholderFrame({ label }) {
+  return (
+    <div className={`group ${FRAME_CLASS} transition-colors duration-300 hover:border-brandLine`}>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
+        <span className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-white/20 flex items-center justify-center text-white/60 transition-colors duration-300 group-hover:border-brandLine group-hover:text-brand">
+          <svg
+            viewBox="0 0 24 24"
+            className="w-6 h-6 md:w-7 md:h-7 translate-x-[1px]"
+            aria-hidden="true"
+          >
+            <path d="M8 5v14l11-7z" fill="currentColor" />
+          </svg>
+        </span>
+        <span className="text-xs font-mono text-mute uppercase tracking-[0.3em] transition-colors duration-300 group-hover:text-brand/70">
+          {label}
+        </span>
+      </div>
 
       {/* Brand hover wash — a flat 5% tint, no gradient and no glow */}
       <span
         className="pointer-events-none absolute inset-0 bg-brandSoft opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         aria-hidden="true"
       />
+    </div>
+  )
+}
+
+function VideoFrame({ src, label }) {
+  if (!src) return <PlaceholderFrame label={label} />
+  return (
+    <div className={FRAME_CLASS}>
+      <AutoplayVideo src={src} />
     </div>
   )
 }
@@ -78,7 +149,8 @@ export default function DemoSection() {
           <p className="max-w-xl text-base text-white/70">{demo.description}</p>
         </Reveal>
 
-        {/* Demo reel — full content width, 16:9, sits under the title */}
+        {/* Demo reel — full content width, 16:9, sits under the title.
+            Autoplays (muted, looped, no controls) when scrolled into view. */}
         <Reveal delay={3} className="mt-16 md:mt-20">
           <VideoFrame src={demo.videoSrc} label={demo.placeholderLabel} />
         </Reveal>

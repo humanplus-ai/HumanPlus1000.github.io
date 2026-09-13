@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { multimodal } from '../../data/site'
 import Reveal from '../ui/Reveal'
 
@@ -12,10 +13,31 @@ import Reveal from '../ui/Reveal'
  * autoplays muted when it exists.
  */
 function ModalityVideo({ src, label }) {
+  const videoRef = useRef(null)
+
+  /* Same guard as Hero/DEMO: browsers only autoplay muted video, and some
+     drop React's `muted` prop on first mount — assert it and kick playback
+     off, otherwise the clip would freeze on frame one. */
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    const played = video.play()
+    if (played && typeof played.catch === 'function') played.catch(() => {})
+  }, [])
+
   return (
     <div className="relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 group-hover:border-brandLine">
       {src ? (
-        <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+        <video
+          ref={videoRef}
+          src={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-mute transition-colors duration-300 group-hover:text-brand/70">

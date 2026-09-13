@@ -15,18 +15,22 @@ export default function StatBlock({ value, unit = '', label, accent = false }) {
        Vertical padding is deliberately tight and symmetric (top == bottom)
        so the number + label block stays optically centred in the slimmed
        data bar. Horizontal padding keeps the original breathing room. */
-    <div className="bg-white/[0.07] px-6 py-2 md:px-8">
+    /* text-center keeps each figure on the page's centre axis, so the whole
+       row reads as one centred block (StatBlock is only used by the Hero). */
+    <div className="bg-white/[0.07] px-6 py-2 md:px-8 text-center">
       <div className="num-big text-3xl md:text-5xl font-light">
         {accent ? (
           /* Highlighted figure — number and unit share the brand colour */
-          <span className="text-brand">
+          <span className="font-bold text-brand">
             {value}
             {unit}
           </span>
         ) : (
-          /* Plain figure — the unit is de-emphasised, never coloured */
+          /* Plain figure — the unit is de-emphasised, never coloured.
+             Only the figure itself is bold; `unit` and `label` keep the
+             light weight of the surrounding block. */
           <>
-            {value}
+            <span className="font-bold">{value}</span>
             {unit && <span className="text-white/50">{unit}</span>}
           </>
         )}

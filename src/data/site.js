@@ -72,12 +72,18 @@ export const hero = {
   recLabel: 'REC / 2026',
 
   /**
-   * Cover image — rendered in the lower-middle of the hero as an ambient
+   * Cover media — rendered in the lower-middle of the hero as an ambient
    * background layer. HeroSection feathers its edges into the black page
-   * with a CSS radial mask; the image's low opacity doubles as the black
-   * scrim. Set to null to remove the layer.
+   * with a CSS radial mask; the media's low opacity doubles as the black
+   * scrim.
+   *
+   * `videoSrc` wins when set: muted + looped + inline autoplay, using the
+   * exact same container, mask and opacity as the still image before it.
+   * `imageSrc` stays as the still fallback if the video is ever removed.
+   * Set both to null to drop the layer entirely.
    */
-  imageSrc: '/images/hero/cover.png',
+  videoSrc: 'videos/hero/HumanV2.mp4',
+  imageSrc: 'images/hero/cover.png',
 
   /* Pill above the title */
   pretitle: 'A 1000-hour synchronized human embodied dataset',
@@ -137,9 +143,8 @@ export const demo = {
   /**
    * Real demo video path.
    * null → the frame renders the rectangle placeholder.
-   * Once the asset exists, set e.g.  '/videos/demo/demo-reel.mp4'
    */
-  videoSrc: null,
+  videoSrc: 'videos/demo/V3.mp4',
 }
 
 /* ------------------------------------------------------------------ */
@@ -170,7 +175,7 @@ export const overview = {
   /**
    * Real overview image path.
    * null → the frame renders the rectangle placeholder.
-   * Once the asset exists, set  '/images/overview/overview.jpg'
+   * Once the asset exists, set  'images/overview/overview.jpg'
    */
   imageSrc: null,
 }
@@ -200,7 +205,7 @@ export const multimodal = {
    * The three modality columns.
    * `videoSrc: null` → the column renders the placeholder rectangle.
    * Drop real clips into public/videos/multimodal/ and set e.g.
-   * '/videos/multimodal/vision.mp4'
+   * 'videos/multimodal/vision.mp4'
    *
    * `index` is the small ordinal in the column heading ("01 / VISUAL …").
    */
@@ -294,7 +299,7 @@ export const representativeTasks = {
    * The six representative tasks.
    * `videoSrc: null` → the frame renders the placeholder rectangle.
    * Drop real clips into public/videos/tasks/ and set e.g.
-   * '/videos/tasks/dishwashing.mp4' to replace a placeholder.
+   * 'videos/tasks/dishwashing.mp4' to replace a placeholder.
    *
    * `index` is the small ordinal in the task heading ("01 / DISHWASHING").
    */

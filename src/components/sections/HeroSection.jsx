@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { hero } from '../../data/site'
 import DotGrid from '../ui/DotGrid'
 import Reveal from '../ui/Reveal'
@@ -7,7 +8,35 @@ import StatBlock from '../ui/StatBlock'
 /* 01 — Cover / Hero                                                   */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The whole "dissolve into black" look lives here, and it is deliberately
+ * media-agnostic: whichever element we render (still image or video) gets
+ * the identical class list and the identical mask, so swapping one for the
+ * other cannot drift the visuals apart.
+ */
+const COVER_MEDIA_CLASS = 'h-full w-full object-cover opacity-[0.55]'
+
+const COVER_MASK = {
+  WebkitMaskImage:
+    'radial-gradient(ellipse 72% 62% at 50% 54%, #000 36%, transparent 76%)',
+  maskImage:
+    'radial-gradient(ellipse 72% 62% at 50% 54%, #000 36%, transparent 76%)',
+}
+
 export default function HeroSection() {
+  const videoRef = useRef(null)
+
+  /* Browsers only autoplay muted video. React sets `muted` as a property,
+     but some browsers drop it on first mount, so assert it once and kick
+     off playback — otherwise the hero would freeze on frame one. */
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    const played = video.play()
+    if (played && typeof played.catch === 'function') played.catch(() => {})
+  }, [])
+
   return (
     <section
       id="hero"
@@ -16,28 +45,41 @@ export default function HeroSection() {
       {/* Background texture */}
       <DotGrid noise vignette />
 
-      {/* Cover image — rises from the lower-middle of the hero and dissolves
+      {/* Cover media — rises from the lower-middle of the hero and dissolves
           into the black background. The radial CSS mask feathers all four
           edges (no rectangle anywhere), and the low opacity doubles as the
-          black scrim: the page behind is #0a0a0a, so dimming the image to
+          black scrim: the page behind is #0a0a0a, so dimming the media to
           ~55% is equivalent to a ~45% black overlay with zero extra layers.
-          z-[1] keeps it above the texture and below the content (z-10). */}
-      {hero.imageSrc && (
+          z-[1] keeps it above the texture and below the content (z-10).
+
+          Same wrapper, same mask, same opacity as the still-image version —
+          only the media element itself changed from <img> to <video>. */}
+      {(hero.videoSrc || hero.imageSrc) && (
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[46vh] md:h-[58vh]"
         >
-          <img
-            src={hero.imageSrc}
-            alt=""
-            className="h-full w-full object-cover opacity-[0.55]"
-            style={{
-              WebkitMaskImage:
-                'radial-gradient(ellipse 72% 62% at 50% 54%, #000 36%, transparent 76%)',
-              maskImage:
-                'radial-gradient(ellipse 72% 62% at 50% 54%, #000 36%, transparent 76%)',
-            }}
-          />
+          {hero.videoSrc ? (
+            <video
+              ref={videoRef}
+              src={hero.videoSrc}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              tabIndex={-1}
+              className={COVER_MEDIA_CLASS}
+              style={COVER_MASK}
+            />
+          ) : (
+            <img
+              src={hero.imageSrc}
+              alt=""
+              className={COVER_MEDIA_CLASS}
+              style={COVER_MASK}
+            />
+          )}
         </div>
       )}
 

@@ -16,10 +16,10 @@
 
 export const site = {
   /* Shown in exactly two places: the nav's top-left wordmark and the
-     footer's bottom-left label. (site.title stays "HumanPlus1000 …" and is
+     footer's bottom-left label. (site.title stays "HumanPlus-1000 …" and is
      untouched.) */
   brand: 'HumanPlus',
-  title: 'HumanPlus1000 — 1000-Hour Embodied Motion Dataset',
+  title: 'HumanPlus-1000 — 1000-Hour Embodied Motion Dataset',
   description:
     'From the real world to world-human models: 1000 hours of synchronized first-person vision and whole-body motion data.',
 }
@@ -33,7 +33,7 @@ export const nav = {
 }
 
 export const footer = {
-  label: 'HumanPlus1000 Dataset',
+  label: 'HumanPlus-1000 Dataset',
   note: 'Synchronized human embodied data for embodied intelligence research.',
   email: 'info@humanplus.xyz',
   /* Year stays dynamic — renders "© 2026 HumanPlus" this year. */
@@ -101,24 +101,23 @@ export const hero = {
   pretitle: 'A 1000-hour synchronized human embodied dataset',
 
   /**
-   * Title, rendered on two lines.
-   * `accent` marks the part drawn in the accent colour.
+   * Title — a single line "HumanPlus-1000" with the headline styling.
+   * `accent` marks the part drawn in the accent colour (the "1000").
    */
   title: {
-    line1: { pre: 'HumanPlus', accent: '1000', post: '' },
-    line2: 'Embodied Motion Dataset',
+    line1: { pre: 'HumanPlus-', accent: '1000', post: '' },
   },
 
   /**
-   * Subtitle as ordered fragments.
-   * Set `strong: true` to render a fragment in full white.
-   * Edit the strings freely — order and count are up to you.
+   * Subtitle — a single, unified two-line text block directly under the
+   * title. Both lines share identical font, size, weight and line spacing
+   * (the site's standard sans body font, regular weight) and are centred,
+   * so the pair reads as one cohesive two-line subtitle rather than two
+   * separate tiers.
    */
   subtitle: [
-    { text: 'From the Real World to ' },
-    { text: 'World-Human Models', strong: true },
-    { text: ', Building a Continuously Evolving ' },
-    { text: 'Data Flywheel', strong: true },
+    'A Large-Scale Human Dataset for Whole-Body Intelligence',
+    'From the Real World to World-Human Models, Building a Continuously Evolving Data Flywheel',
   ],
 
   /**
@@ -164,7 +163,7 @@ export const demo = {
    * Keep the path relative (no leading "/") so it also resolves under a
    * GitHub Pages sub-path.
    */
-  videoSrc: 'videos/demo/HumanHeroV5.mp4',
+  videoSrc: 'videos/demo/HeroV5.mp4',
 }
 
 /* ------------------------------------------------------------------ */
@@ -176,7 +175,7 @@ export const overview = {
   label: 'OVERVIEW',
 
   /* Title — left column headline */
-  title: 'HumanPlus1000',
+  title: 'HumanPlus-1000',
 
   /**
    * Body copy — one string per paragraph, no bold fragments.
@@ -184,9 +183,9 @@ export const overview = {
    *  used by `hero.subtitle`: [{ text, strong }, ...].)
    */
   body: [
-    'The HumanPlus1000 Embodied Motion Dataset is a large-scale, multi-modal, and continuously evolving human data infrastructure for embodied intelligence and robot learning.',
-    'HumanPlus1000 integrates first-person vision, whole-body motion, hand movements, human-object interactions, and real-world changes into a unified spatiotemporal representation, capturing how humans perceive, act, interact, and change the world. It covers diverse real-world scenarios, including campus life, industrial operations, logistics, warehousing, and household activities.',
-    'Through standardized data collection, multi-modal synchronization, structured annotation, and quality control, HumanPlus1000 provides a scalable data foundation for imitation learning, World-Human Model development, and real-world robot deployment.',
+    'The HumanPlus-1000 Embodied Motion Dataset is a large-scale, multi-modal, and continuously evolving human data infrastructure for embodied intelligence and robot learning.',
+    'HumanPlus-1000 integrates first-person vision, whole-body motion, hand movements, human-object interactions, and real-world changes into a unified spatiotemporal representation, capturing how humans perceive, act, interact, and change the world. It covers diverse real-world scenarios, including campus life, industrial operations, logistics, warehousing, and household activities.',
+    'Through standardized data collection, multi-modal synchronization, structured annotation, and quality control, HumanPlus-1000 provides a scalable data foundation for imitation learning, World-Human Model development, and real-world robot deployment.',
   ],
 
   /* Text shown inside the frame while there is no real media */
@@ -277,10 +276,10 @@ export const download = {
   /* The single wide panel: left content + right CTA, no card fill */
   panel: {
     /* Small mono heading inside the panel */
-    heading: 'HUMANPLUS1000 DATASET',
+    heading: 'HUMANPLUS-1000 DATASET',
 
     /* Two body lines */
-    bodyPrimary: 'Explore and access the HumanPlus1000 dataset on Hugging Face.',
+    bodyPrimary: 'Explore and access the HumanPlus-1000 dataset on Hugging Face.',
     bodySecondary:
       'A large-scale multimodal dataset capturing human motion, first-person vision, and real-world interactions.',
 

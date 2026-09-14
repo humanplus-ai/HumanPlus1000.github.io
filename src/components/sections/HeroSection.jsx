@@ -78,9 +78,8 @@ export default function HeroSection() {
           </span>
         </Reveal>
 
-        {/* Title — two lines.
-            The ceiling is lower than a single-line title because line 2
-            ("Embodied Motion Dataset") is the widest row. */}
+        {/* Title — single line "HumanPlus-1000" with the headline styling.
+            The "1000" stays in the brand accent; nothing else is highlighted. */}
         <Reveal
           as="h1"
           delay={1}
@@ -92,24 +91,23 @@ export default function HeroSection() {
             <span className="text-brand">{hero.title.line1.accent}</span>
             {hero.title.line1.post}
           </span>
-          <span className="block whitespace-nowrap">{hero.title.line2}</span>
         </Reveal>
 
-        {/* Subtitle */}
+        {/* Subtitle — one unified two-line text block. Both rows share the
+            same font, size, weight and line spacing (site's standard sans
+            body font, regular) and are centred as a single cohesive subtitle.
+            A hard <br/> separates the two rows and `whitespace-nowrap` forbids
+            any internal re-wrap, so the long second row stays on exactly one
+            line (no third row). The wider max-width (max-w-6xl) gives the
+            second row room to fit on one line at desktop widths. */}
         <Reveal
           as="p"
           delay={2}
-          className={`text-center mt-8 text-lg md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed font-times ${COPY_SHADOW}`}
+          className={`text-center mt-8 text-base md:text-xl text-white/80 max-w-6xl mx-auto leading-relaxed font-normal whitespace-nowrap ${COPY_SHADOW}`}
         >
-          {hero.subtitle.map((part, i) =>
-            part.strong ? (
-              <span key={i} className="text-white">
-                {part.text}
-              </span>
-            ) : (
-              <span key={i}>{part.text}</span>
-            )
-          )}
+          {hero.subtitle[0]}
+          <br />
+          {hero.subtitle[1]}
         </Reveal>
 
         {/* Stats card — frosted silver panel floating over the cover image.

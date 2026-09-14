@@ -5,7 +5,11 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
+dist_*/
 .vite/
+
+# Vite transpiled config cache (regenerated on each dev/build)
+vite.config.js.timestamp-*.mjs
 
 # Local preview logs
 server.log

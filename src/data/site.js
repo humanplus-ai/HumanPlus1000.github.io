@@ -89,7 +89,7 @@ export const hero = {
    * `imageSrc` stays as the still fallback if the video is ever removed.
    * Set both to null to drop the layer entirely.
    */
-  videoSrc: 'videos/hero/HumanV2.mp4',
+  videoSrc: 'videos/hero/herov2.mp4',
   imageSrc: 'images/hero/cover.png',
 
   /* Pill above the title */
@@ -236,13 +236,6 @@ export const multimodal = {
       tags: 'Full-body Motion · Pose · IMU',
       videoSrc: 'videos/multimodal/Motion.mp4',
     },
-    {
-      index: '03',
-      title: 'Spatial Interaction',
-      desc: 'Capturing spatial relationships and interactions between humans, objects, and environments.',
-      tags: 'Human–Object · Interaction · Spatial Context',
-      videoSrc: null,
-    },
   ],
 }
 
@@ -317,11 +310,12 @@ export const representativeTasks = {
    * `index` is the small ordinal in the task heading ("01 / DISHWASHING").
    */
   tasks: [
-    { index: '01', title: 'DISHWASHING', videoSrc: null },
-    { index: '02', title: 'SWEEPING', videoSrc: null },
-    { index: '03', title: 'TEA PREPARATION', videoSrc: null },
-    { index: '04', title: 'FOLDING CLOTHES', videoSrc: null },
-    { index: '05', title: 'HANDLING TRAYS', videoSrc: null },
+    { index: '01', title: 'DISHWASHING', videoSrc: 'videos/tasks/01.mp4' },
+    { index: '02', title: 'SWEEPING', videoSrc: 'videos/tasks/02.mp4' },
+    { index: '03', title: 'TEA PREPARATION', videoSrc: 'videos/tasks/03.mp4' },
+    { index: '04', title: 'FOLDING CLOTHES', videoSrc: 'videos/tasks/04.mp4' },
+    { index: '05', title: 'HANDLING TRAYS', videoSrc: 'videos/tasks/05.mp4' },
+    /* 06 stays a placeholder until its clip exists */
     { index: '06', title: 'WORKPIECE PROCESSING', videoSrc: null },
   ],
 }

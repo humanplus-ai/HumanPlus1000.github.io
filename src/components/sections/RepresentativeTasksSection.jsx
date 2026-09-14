@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { representativeTasks } from '../../data/site'
 import Reveal from '../ui/Reveal'
 
@@ -13,10 +14,31 @@ import Reveal from '../ui/Reveal'
  * footage later needs no layout change — only a `videoSrc` path in site.js.
  */
 function TaskVideo({ src, label }) {
+  const videoRef = useRef(null)
+
+  /* Same guard as Hero/DEMO/Multimodal: browsers only autoplay muted video,
+     and some drop React's `muted` prop on first mount — assert it and kick
+     playback off, otherwise the clip would freeze on frame one. */
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    const played = video.play()
+    if (played && typeof played.catch === 'function') played.catch(() => {})
+  }, [])
+
   return (
     <div className="relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 group-hover:border-brandLine">
       {src ? (
-        <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+        <video
+          ref={videoRef}
+          src={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
           <span className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center text-white/60 transition-colors duration-300 group-hover:border-brandLine group-hover:text-brand">

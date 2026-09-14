@@ -88,16 +88,17 @@ export default function HeroSection() {
       )}
 
       {/* Top scrim — soft vertical fade so the fixed navbar melts into the
-          footage instead of sitting on a hard seam. Near-black behind the
-          bar, gone by 55% of the hero height, so the lower half of the clip
-          keeps its original brightness. Layer order: video (z-0) → scrim
-          (z-[1]) → copy (z-10). Purely decorative and click-through. */}
+          footage instead of sitting on a hard seam. Lighter than before:
+          the fixed navbar already carries its own rgba(10,10,10,.7) glass,
+          so we only need a gentle darkening up top — the clip stays brighter
+          and the lower half keeps its original brightness. Layer order:
+          video (z-0) → scrim (z-[1]) → copy (z-10). Decorative + click-through. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,0.55) 28%, rgba(0,0,0,0.2) 42%, rgba(0,0,0,0) 55%)',
+            'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.65) 12%, rgba(0,0,0,0.35) 28%, rgba(0,0,0,0.12) 42%, rgba(0,0,0,0) 55%)',
         }}
       />
 

@@ -112,11 +112,11 @@ export default function MultimodalSection() {
           <p className="max-w-xl text-base text-white/70">{multimodal.description}</p>
         </Reveal>
 
-        {/* Three columns — hairline dividers sit in the middle of the gap so
-            all three columns keep exactly the same content width. */}
-        <div className="mt-20 grid gap-14 md:gap-8 md:grid-cols-3">
+        {/* Two columns, 50/50 — hairline dividers sit in the middle of the gap
+            so both columns keep exactly the same content width. */}
+        <div className="mt-20 grid gap-14 md:gap-8 md:grid-cols-2">
           {multimodal.cards.map((card, i) => (
-            <Reveal key={card.titleEn} delay={i + 3} className="relative">
+            <Reveal key={card.title} delay={i + 3} className="relative">
               {i > 0 && (
                 <span
                   className="hidden md:block absolute top-0 bottom-0 -left-4 w-px bg-white/10"

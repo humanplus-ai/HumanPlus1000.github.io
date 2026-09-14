@@ -89,8 +89,8 @@ export const hero = {
    * `imageSrc` stays as the still fallback if the video is ever removed.
    * Set both to null to drop the layer entirely.
    */
-  videoSrc: 'videos/hero/herov2.mp4',
-  imageSrc: 'images/hero/cover.png',
+  videoSrc: null,
+  imageSrc: 'images/hero/hero-cover.png',
 
   /* First-frame poster shown instantly while the clip buffers — keeps the
      hero from flashing black before playback starts. Relative path so it
@@ -105,7 +105,7 @@ export const hero = {
    * `accent` marks the part drawn in the accent colour.
    */
   title: {
-    line1: { pre: 'HumanPlus', accent: '1000', post: '-Hour' },
+    line1: { pre: 'HumanPlus', accent: '1000', post: '' },
     line2: 'Embodied Motion Dataset',
   },
 
@@ -153,7 +153,7 @@ export const demo = {
   placeholderLabel: 'DEMO VIDEO',
 
   /* First-frame poster shown while the clip buffers. Relative path. */
-  posterSrc: 'videos/demo/v4-cover.jpg',
+  posterSrc: 'videos/demo/HumanHeroV5.jpg',
 
   /**
    * Real demo video path.
@@ -164,7 +164,7 @@ export const demo = {
    * Keep the path relative (no leading "/") so it also resolves under a
    * GitHub Pages sub-path.
    */
-  videoSrc: 'videos/demo/HumanV4.mp4',
+  videoSrc: 'videos/demo/HumanHeroV5.mp4',
 }
 
 /* ------------------------------------------------------------------ */
@@ -184,20 +184,29 @@ export const overview = {
    *  used by `hero.subtitle`: [{ text, strong }, ...].)
    */
   body: [
-    'The HumanPlus1000-Hour Embodied Motion Dataset is a large-scale, multi-modal, and continuously evolving human data infrastructure for embodied intelligence and robot learning.',
+    'The HumanPlus1000 Embodied Motion Dataset is a large-scale, multi-modal, and continuously evolving human data infrastructure for embodied intelligence and robot learning.',
     'HumanPlus1000 integrates first-person vision, whole-body motion, hand movements, human-object interactions, and real-world changes into a unified spatiotemporal representation, capturing how humans perceive, act, interact, and change the world. It covers diverse real-world scenarios, including campus life, industrial operations, logistics, warehousing, and household activities.',
     'Through standardized data collection, multi-modal synchronization, structured annotation, and quality control, HumanPlus1000 provides a scalable data foundation for imitation learning, World-Human Model development, and real-world robot deployment.',
   ],
 
-  /* Text shown inside the frame while there is no real image */
+  /* Text shown inside the frame while there is no real media */
   placeholderLabel: 'IMAGE PLACEHOLDER',
 
   /**
-   * Real overview image path.
+   * Real overview image path (still fallback).
    * null → the frame renders the rectangle placeholder.
    * Relative (no leading "/") so it also works under a Pages sub-path.
    */
   imageSrc: 'images/overview/humanv4-cover.jpg',
+
+  /**
+   * Real overview video path — replaces the still image on the right.
+   * When set, the frame renders an autoplaying (muted + looped + inline)
+   * <video> using the exact same container, aspect ratio and object-cover
+   * fit as the image before it, so the module layout is unchanged.
+   * Relative (no leading "/") so it also works under a Pages sub-path.
+   */
+  videoSrc: 'videos/overview/herov2.mp4',
 }
 
 /* ------------------------------------------------------------------ */
@@ -268,10 +277,10 @@ export const download = {
   /* The single wide panel: left content + right CTA, no card fill */
   panel: {
     /* Small mono heading inside the panel */
-    heading: 'HUMAN1000 DATASET',
+    heading: 'HUMANPLUS1000 DATASET',
 
     /* Two body lines */
-    bodyPrimary: 'Explore and access the Human1000 dataset on Hugging Face.',
+    bodyPrimary: 'Explore and access the HumanPlus1000 dataset on Hugging Face.',
     bodySecondary:
       'A large-scale multimodal dataset capturing human motion, first-person vision, and real-world interactions.',
 

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { overview } from '../../data/site'
 import Reveal from '../ui/Reveal'
 
@@ -18,15 +19,42 @@ function Paragraph({ children }) {
 /* ------------------------------------------------------------------ */
 
 /**
- * 4:3 frame that will hold the overview image.
- * Renders a real <img> as soon as `overview.imageSrc` is set; until then it
- * falls back to a flat rectangle. Swapping in the asset needs no layout
- * change — only a path in site.js.
+ * 4:3 frame that holds the overview media.
+ * Renders a real <video> when `videoSrc` is set, otherwise a still <img>
+ * when `src` is set, otherwise a flat placeholder rectangle. Swapping the
+ * asset needs no layout change — only a path in site.js. The video reuses
+ * the image's exact container, aspect ratio and object-cover fit so the
+ * module layout is unchanged.
  */
-function ImageFrame({ src, label }) {
+function ImageFrame({ src, videoSrc, label }) {
+  const videoRef = useRef(null)
+
+  /* Force muted + kick off playback on mount. React's `muted` prop is
+     sometimes ignored by the browser on first render, which can block
+     autoplay — setting it imperatively guarantees silent autoplay. */
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    v.muted = true
+    const p = v.play()
+    if (p && typeof p.catch === 'function') p.catch(() => {})
+  }, [])
+
   return (
     <div className="group relative aspect-[4/3] w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 hover:border-brandLine">
-      {src ? (
+      {videoSrc ? (
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          poster={src || undefined}
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls={false}
+          className="w-full h-full object-cover"
+        />
+      ) : src ? (
         <img src={src} alt="" className="w-full h-full object-cover" />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
@@ -77,9 +105,13 @@ export default function OverviewSection() {
             </Reveal>
           </div>
 
-          {/* Right — image */}
+          {/* Right — media (video or image) */}
           <Reveal delay={3}>
-            <ImageFrame src={overview.imageSrc} label={overview.placeholderLabel} />
+            <ImageFrame
+              src={overview.imageSrc}
+              videoSrc={overview.videoSrc}
+              label={overview.placeholderLabel}
+            />
           </Reveal>
         </div>
       </div>

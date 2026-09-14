@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import { hero } from '../../data/site'
 import DotGrid from '../ui/DotGrid'
 import Reveal from '../ui/Reveal'
@@ -9,97 +8,58 @@ import StatBlock from '../ui/StatBlock'
 /* ------------------------------------------------------------------ */
 
 /**
- * The cover media now runs full-bleed behind the copy: no scrim, no dimming
- * layer, no card. `object-cover` fills the section on every aspect ratio and
- * the clip keeps its native colour, brightness and detail.
- *
- * The only remaining treatment is a barely-there fade across the last 8% at
- * the bottom, so the frame melts into the black page below instead of ending
- * on a hard rectangle edge. It is a mask on the media element itself — never
- * an overlay on top of it — and it never reads as a dark蒙版.
+ * The cover is a static still (no video): it runs full-bleed behind the copy
+ * with `object-cover` and keeps its native colour and brightness. No autoplay,
+ * no muted/loop/playsInline, and no IntersectionObserver — the image is just a
+ * background layer.
  */
 const COVER_MEDIA_CLASS = 'h-full w-full object-cover'
 
-const COVER_EDGE_FADE = {
-  WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 92%, rgba(0,0,0,0.9) 100%)',
-  maskImage: 'linear-gradient(to bottom, #000 0%, #000 92%, rgba(0,0,0,0.9) 100%)',
-}
-
 /**
- * Readability over the (now undimmed) footage comes from a restrained drop
- * shadow on the copy — not from darkening the video. No glow, no gradient
- * plate, no glass panel behind the text.
+ * Readability over the still comes from a restrained drop shadow on the copy
+ * — not from darkening the image. No glow, no gradient plate, no glass panel.
  */
 const COPY_SHADOW =
   '[text-shadow:0_2px_24px_rgba(0,0,0,0.55),0_1px_4px_rgba(0,0,0,0.4)]'
 
 export default function HeroSection() {
-  const videoRef = useRef(null)
-
-  /* Browsers only autoplay muted video. React sets `muted` as a property,
-     but some browsers drop it on first mount, so assert it once and kick
-     off playback — otherwise the hero would freeze on frame one. */
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-    video.muted = true
-    const played = video.play()
-    if (played && typeof played.catch === 'function') played.catch(() => {})
-  }, [])
-
   return (
     <section
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
     >
-      {/* Background texture — kept only as a fallback if the clip is missing;
-          the vignette is gone, it would have been a black wash over the
-          footage. */}
+      {/* Background texture — kept only as a faint fallback behind the still. */}
       <DotGrid noise />
 
-      {/* Cover media — full-bleed behind the copy, z-0 under the content
-          (z-10). No scrim, no opacity dimming, no card frame: the clip is
-          the visual, the type sits on top of it. Autoplay/muted/loop/inline
-          behaviour is unchanged. */}
-      {(hero.videoSrc || hero.imageSrc) && (
+      {/* Cover still — full-bleed behind the copy (z-0). Static image, no
+          video, no autoplay, no IntersectionObserver. width/height 100% +
+          object-cover come from COVER_MEDIA_CLASS so it fills the hero. */}
+      {hero.imageSrc && (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
-          {hero.videoSrc ? (
-            <video
-              ref={videoRef}
-              src={hero.videoSrc}
-              poster={hero.posterSrc}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              tabIndex={-1}
-              className={COVER_MEDIA_CLASS}
-              style={COVER_EDGE_FADE}
-            />
-          ) : (
-            <img
-              src={hero.imageSrc}
-              alt=""
-              className={COVER_MEDIA_CLASS}
-              style={COVER_EDGE_FADE}
-            />
-          )}
+          <img
+            src={hero.imageSrc}
+            alt=""
+            className={COVER_MEDIA_CLASS}
+          />
         </div>
       )}
 
-      {/* Top scrim — soft vertical fade so the fixed navbar melts into the
-          footage instead of sitting on a hard seam. Lighter than before:
-          the fixed navbar already carries its own rgba(10,10,10,.7) glass,
-          so we only need a gentle darkening up top — the clip stays brighter
-          and the lower half keeps its original brightness. Layer order:
-          video (z-0) → scrim (z-[1]) → copy (z-10). Decorative + click-through. */}
+      {/* Single readability scrim — ONE overlay layer only (no second stacked
+          mask). It carries a top-to-bottom black fade (navbar / headline
+          legibility, fully transparent by the lower half) plus edge feathering
+          that melts the still into the black page on the left/right and bottom
+          so there is no hard rectangle edge. All gradients live on this one
+          element's `background`, so nothing is layered on top of anything else.
+          Layer order: still (z-0) → scrim (z-[1]) → copy (z-10). Decorative +
+          click-through. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.65) 12%, rgba(0,0,0,0.35) 28%, rgba(0,0,0,0.12) 42%, rgba(0,0,0,0) 55%)',
+            'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0) 75%), ' +
+            'linear-gradient(to right, #0a0a0a 0%, rgba(10,10,10,0) 9%, rgba(10,10,10,0) 91%, #0a0a0a 100%), ' +
+            'linear-gradient(to bottom, rgba(10,10,10,0) 58%, rgba(10,10,10,0.9) 100%)',
         }}
       />
 
@@ -139,8 +99,7 @@ export default function HeroSection() {
         <Reveal
           as="p"
           delay={2}
-		  className={`text-center mt-8 text-lg md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed font-times ${COPY_SHADOW}`}
-
+          className={`text-center mt-8 text-lg md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed font-times ${COPY_SHADOW}`}
         >
           {hero.subtitle.map((part, i) =>
             part.strong ? (

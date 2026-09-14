@@ -92,6 +92,11 @@ export const hero = {
   videoSrc: 'videos/hero/herov2.mp4',
   imageSrc: 'images/hero/cover.png',
 
+  /* First-frame poster shown instantly while the clip buffers — keeps the
+     hero from flashing black before playback starts. Relative path so it
+     also resolves under a GitHub Pages sub-path. */
+  posterSrc: 'videos/hero/hero_poster.png',
+
   /* Pill above the title */
   pretitle: 'A 1000-hour synchronized human embodied dataset',
 
@@ -146,6 +151,9 @@ export const demo = {
 
   /* Text shown inside the frame while there is no real footage */
   placeholderLabel: 'DEMO VIDEO',
+
+  /* First-frame poster shown while the clip buffers. Relative path. */
+  posterSrc: 'videos/demo/v4-cover.jpg',
 
   /**
    * Real demo video path.
@@ -316,6 +324,6 @@ export const representativeTasks = {
     { index: '04', title: 'FOLDING CLOTHES', videoSrc: 'videos/tasks/04.mp4' },
     { index: '05', title: 'HANDLING TRAYS', videoSrc: 'videos/tasks/05.mp4' },
     /* 06 stays a placeholder until its clip exists */
-    { index: '06', title: 'WORKPIECE PROCESSING', videoSrc: null },
+    { index: '06', title: 'WORKPIECE PROCESSING', videoSrc: 'videos/tasks/06.mp4' },
   ],
 }

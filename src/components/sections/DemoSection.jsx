@@ -28,7 +28,7 @@ const FRAME_CLASS =
  *   `muted` prop on first mount, which would block autoplay and freeze the
  *   clip on frame one.
  */
-function AutoplayVideo({ src }) {
+function AutoplayVideo({ src, poster }) {
   const videoRef = useRef(null)
 
   useEffect(() => {
@@ -63,11 +63,11 @@ function AutoplayVideo({ src }) {
     <video
       ref={videoRef}
       src={src}
-      autoPlay
+      poster={poster}
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       tabIndex={-1}
       className="h-full w-full object-cover select-none outline-none focus:outline-none"
     />
@@ -106,11 +106,11 @@ function PlaceholderFrame({ label }) {
   )
 }
 
-function VideoFrame({ src, label }) {
+function VideoFrame({ src, label, poster }) {
   if (!src) return <PlaceholderFrame label={label} />
   return (
     <div className={FRAME_CLASS}>
-      <AutoplayVideo src={src} />
+      <AutoplayVideo src={src} poster={poster} />
     </div>
   )
 }
@@ -152,7 +152,7 @@ export default function DemoSection() {
         {/* Demo reel — full content width, 16:9, sits under the title.
             Autoplays (muted, looped, no controls) when scrolled into view. */}
         <Reveal delay={3} className="mt-16 md:mt-20">
-          <VideoFrame src={demo.videoSrc} label={demo.placeholderLabel} />
+          <VideoFrame src={demo.videoSrc} label={demo.placeholderLabel} poster={demo.posterSrc} />
         </Reveal>
       </div>
     </section>

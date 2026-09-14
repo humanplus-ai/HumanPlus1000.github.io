@@ -67,6 +67,7 @@ export default function HeroSection() {
             <video
               ref={videoRef}
               src={hero.videoSrc}
+              poster={hero.posterSrc}
               autoPlay
               muted
               loop

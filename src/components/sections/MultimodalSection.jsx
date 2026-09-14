@@ -15,15 +15,37 @@ import Reveal from '../ui/Reveal'
 function ModalityVideo({ src, label }) {
   const videoRef = useRef(null)
 
-  /* Same guard as Hero/DEMO: browsers only autoplay muted video, and some
-     drop React's `muted` prop on first mount — assert it and kick playback
-     off, otherwise the clip would freeze on frame one. */
+  /* Lazy autoplay: this clip is below the fold, so don't fetch it on first
+     paint. An IntersectionObserver plays it once ~25% visible and pauses on
+     the way out — same pattern as DemoSection. `preload="none"` keeps the
+     browser from downloading until the observer fires. The muted assert is
+     still required: some browsers drop React's `muted` prop on first mount
+     and would block autoplay, freezing the clip on frame one. */
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
     video.muted = true
-    const played = video.play()
-    if (played && typeof played.catch === 'function') played.catch(() => {})
+
+    const play = () => {
+      const played = video.play()
+      if (played && typeof played.catch === 'function') played.catch(() => {})
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      play()
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) play()
+        else video.pause()
+      },
+      { threshold: 0.25 }
+    )
+    observer.observe(video)
+
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -32,10 +54,10 @@ function ModalityVideo({ src, label }) {
         <video
           ref={videoRef}
           src={src}
-          autoPlay
           muted
           loop
           playsInline
+          preload="none"
           className="w-full h-full object-cover"
         />
       ) : (

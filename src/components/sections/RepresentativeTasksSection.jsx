@@ -16,15 +16,36 @@ import Reveal from '../ui/Reveal'
 function TaskVideo({ src, label }) {
   const videoRef = useRef(null)
 
-  /* Same guard as Hero/DEMO/Multimodal: browsers only autoplay muted video,
-     and some drop React's `muted` prop on first mount — assert it and kick
-     playback off, otherwise the clip would freeze on frame one. */
+  /* Lazy autoplay: like DemoSection, each clip waits off-screen. An
+     IntersectionObserver plays it once ~25% visible and pauses on exit, and
+     `preload="none"` stops the browser fetching all six at once on first
+     paint. The muted assert guards against browsers that drop React's
+     `muted` prop on mount and would otherwise freeze the clip on frame one. */
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
     video.muted = true
-    const played = video.play()
-    if (played && typeof played.catch === 'function') played.catch(() => {})
+
+    const play = () => {
+      const played = video.play()
+      if (played && typeof played.catch === 'function') played.catch(() => {})
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      play()
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) play()
+        else video.pause()
+      },
+      { threshold: 0.25 }
+    )
+    observer.observe(video)
+
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -33,10 +54,10 @@ function TaskVideo({ src, label }) {
         <video
           ref={videoRef}
           src={src}
-          autoPlay
           muted
           loop
           playsInline
+          preload="none"
           className="w-full h-full object-cover"
         />
       ) : (
@@ -72,7 +93,7 @@ function TaskCell({ task, placeholderLabel }) {
       {/* Ordinal + English task name — the cell heading.
           Only the ordinal number carries the brand colour. */}
       <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-white">
-        <span className="text-brand">{task.index}</span> / {task.title}
+        <span className="text-brand">{task.index}</span>
       </h3>
 
       {/* Video — the main visual element of the cell */}

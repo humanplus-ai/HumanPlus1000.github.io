@@ -312,7 +312,7 @@ export const representativeTasks = {
   title: 'REPRESENTATIVE TASKS',
 
   /* One-line description under the title */
-  description: 'A glimpse into the diverse activities captured by Human1000.',
+  description: 'A glimpse into the diverse activities captured by HumanPlus-1000.',
 
   /* Text shown inside a task frame while there is no real footage */
   placeholderLabel: 'VIDEO',

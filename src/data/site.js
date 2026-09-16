@@ -164,6 +164,49 @@ export const demo = {
    * GitHub Pages sub-path.
    */
   videoSrc: 'videos/demo/HeroV5.mp4',
+
+  /**
+   * Four sample clips rendered in a 2 × 2 grid directly under the main reel.
+   *
+   * Unlike the main reel these are NOT autoplayed — a 2 × 2 grid decoding
+   * four streams at once is wasteful, so each clip only loads once it is
+   * scrolled near the viewport and then waits for a click to play/pause.
+   *
+   * Replace a clip by overwriting the file in `public/videos/demo/samples/`
+   * (keep the name) or by changing the two paths below. Both are relative
+   * (no leading "/") so they resolve under a GitHub Pages sub-path.
+   *
+   * - index      — ordinal drawn in the brand colour above the caption
+   * - title      — English caption, keep it short (one line)
+   * - videoSrc   — MP4, muted + inline, click to play/pause
+   * - posterSrc  — still frame shown until the first frame decodes
+   */
+  samples: [
+    {
+      index: '01',
+      title: 'Egocentric Vision',
+      videoSrc: 'videos/demo/samples/sample-01.mp4',
+      posterSrc: 'videos/demo/samples/sample-01.jpg',
+    },
+    {
+      index: '02',
+      title: 'Whole-Body Motion',
+      videoSrc: 'videos/demo/samples/sample-02.mp4',
+      posterSrc: 'videos/demo/samples/sample-02.jpg',
+    },
+    {
+      index: '03',
+      title: 'Hand-Object Interaction',
+      videoSrc: 'videos/demo/samples/sample-03.mp4',
+      posterSrc: 'videos/demo/samples/sample-03.jpg',
+    },
+    {
+      index: '04',
+      title: 'Long-Horizon Activity',
+      videoSrc: 'videos/demo/samples/sample-04.mp4',
+      posterSrc: 'videos/demo/samples/sample-04.jpg',
+    },
+  ],
 }
 
 /* ------------------------------------------------------------------ */

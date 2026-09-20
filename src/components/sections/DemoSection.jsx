@@ -126,7 +126,7 @@ function VideoFrame({ src, label, poster }) {
  */
 export default function DemoSection() {
   return (
-    <section className="relative py-32 md:py-40">
+    <section className="relative py-[85px] md:py-[107px]">
       {/* Anchor sits on the content wrapper, not on the <section>: the section's
           py-32/md:py-40 padding is invisible, so anchoring the section itself
           landed the heading far below the navbar. */}

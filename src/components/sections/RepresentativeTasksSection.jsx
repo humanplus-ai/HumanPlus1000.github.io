@@ -118,7 +118,7 @@ export default function RepresentativeTasksSection() {
   const { tasks, placeholderLabel } = representativeTasks
 
   return (
-    <section className="relative py-32 md:py-40">
+    <section className="relative py-[85px] md:py-[107px]">
       {/* id="tasks" — page order places this between Multimodal and Download.
           Anchor is on the content wrapper (skips the section's top padding). */}
       <div id="tasks" className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10">

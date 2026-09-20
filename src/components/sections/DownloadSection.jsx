@@ -18,7 +18,7 @@ export default function DownloadSection() {
   const href = panel.cta.url ?? '#'
 
   return (
-    <section className="relative py-32 md:py-40">
+    <section className="relative py-[85px] md:py-[107px]">
       {/* id="download" — the nav "Download" link points at #download.
           Anchor is on the content wrapper: the section's top padding is
           invisible, so anchoring the section itself pushed the heading down

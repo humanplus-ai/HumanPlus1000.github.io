@@ -36,3 +36,7 @@ legacy/
 
 # Design source document (kept locally, not part of the codebase)
 网页设计.docx
+
+# Local temp/debug artifacts (kept locally, not committed to the repo)
+_tmp*
+tmp_research_check.py

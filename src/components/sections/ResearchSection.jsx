@@ -183,7 +183,7 @@ export default function ResearchSection() {
   const last = papers.length - 1
 
   return (
-    <section className="relative py-32 md:py-40">
+    <section className="relative py-[85px] md:py-[107px]">
       {/* id="research" — the nav "Research" link points at #research.
           Anchor is on the content wrapper so the section's invisible top
           padding does not push the heading below the fold. (Same reason

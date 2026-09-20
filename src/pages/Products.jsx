@@ -33,11 +33,13 @@ export default function Products() {
         </div>
       </section>
 
-      {/* The bands — products follow one another with no divider between
-          them; the sections' own top/bottom padding carries the rhythm. */}
-      {products.items.map((item) => (
-        <ProductSection key={item.index} item={item} />
-      ))}
+      {/* The bands — each product is now its own dark-grey panel; a black
+          gap between them keeps the rhythm without a hairline divider. */}
+      <div className="space-y-16 md:space-y-24">
+        {products.items.map((item) => (
+          <ProductSection key={item.index} item={item} />
+        ))}
+      </div>
 
       {/* TECHNICAL SPECIFICATIONS — closes the page with both spec tables,
           stacked. Page-internal only: no nav entry, no route of its own. */}

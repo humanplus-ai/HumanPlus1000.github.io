@@ -257,6 +257,14 @@ export const overview = {
       { id: 9, src: 'videos/visualizations/sample-09.mp4', poster: 'images/visualizations/sample-09.jpg' },
     ],
   },
+  /* Standalone RECONSTRUCTION VISUALIZATION section — owns the carousel that
+     used to sit under HumanPlus-1000. Three-line hierarchy (kicker / title /
+     description) matching the OVERVIEW title block's vocabulary. */
+  reconstruction: {
+    label: 'RECONSTRUCTION',
+    title: 'VISUALIZATION',
+    description: 'Reconstructing human motion and behavior from multimodal data.',
+  },
 }
 
 /* ------------------------------------------------------------------ */
@@ -465,7 +473,7 @@ export const research = {
       year: '2025',
       venue: 'SIGGRAPH',
       venueNote: '',
-      image: 'images/research/02.jpg',
+      image: 'images/research/03.jpg',
       awards: ['Best Paper Award', 'SIGGRAPH 2025'],
       description:
         'We propose a novel dynamic calibration method for sparse inertial motion capture systems, which is the first to break the restrictive absolute static assumption in IMU calibration, the first to achieve implicit IMU calibration, as well as the first to enable long-term and accurate motion capture using sparse IMUs.',
@@ -481,7 +489,7 @@ export const research = {
       year: '2024',
       venue: 'CVPR',
       venueNote: '',
-      image: 'images/research/03.jpg',
+      image: 'images/research/02.jpg',
       awards: [],
       description:
         'We introduce Loose Inertial Poser, a novel motion capture solution with high wearing comfortableness, by integrating four Inertial Measurement Units (IMUs) into a loose-wear jacket.',

@@ -7,6 +7,7 @@ import Products from './pages/Products'
 import HeroSection from './components/sections/HeroSection'
 import DemoSection from './components/sections/DemoSection'
 import OverviewSection from './components/sections/OverviewSection'
+import ReconstructionSection from './components/sections/ReconstructionSection'
 import MultimodalSection from './components/sections/MultimodalSection'
 import RepresentativeTasksSection from './components/sections/RepresentativeTasksSection'
 import ResearchSection from './components/sections/ResearchSection'
@@ -39,6 +40,7 @@ export default function App() {
             <HeroSection />
             <DemoSection />
             <OverviewSection />
+            <ReconstructionSection />
             <MultimodalSection />
             <RepresentativeTasksSection />
             <ResearchSection />

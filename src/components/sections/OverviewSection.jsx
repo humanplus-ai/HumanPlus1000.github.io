@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { overview } from '../../data/site'
 import Reveal from '../ui/Reveal'
-import VideoCarousel from '../ui/VideoCarousel'
 
 /* ------------------------------------------------------------------ */
 /* Body copy                                                           */
@@ -113,7 +112,7 @@ function ImageFrame({ src, videoSrc, label }) {
 
 export default function OverviewSection() {
   return (
-    <section className="relative py-32 md:py-40">
+    <section className="relative py-[85px] md:py-[107px]">
       <div id="overview" className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10">
         <div className="grid gap-12 lg:gap-16 items-center md:grid-cols-2 lg:grid-cols-[1.15fr_1fr]">
           {/* Left — copy */}
@@ -148,12 +147,6 @@ export default function OverviewSection() {
             />
           </Reveal>
         </div>
-
-        {/* Demo carousel — ONE clip at a time, full content width. Moved here
-            from MULTIMODAL DATA 03 on 2026-09-20; Dataset now ends at 02. */}
-        <Reveal delay={1} className="mt-20 md:mt-24">
-          <VideoCarousel videos={overview.visualizations.videos} />
-        </Reveal>
       </div>
     </section>
   )

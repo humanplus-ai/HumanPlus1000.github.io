@@ -112,7 +112,7 @@ function ModalityColumn({ card, placeholderLabel }) {
 
 export default function MultimodalSection() {
   return (
-    <section className="relative py-32 md:py-40">
+    <section className="relative py-[85px] md:py-[107px]">
       {/* id="dataset" — the nav "Dataset" link points at #dataset.
           Anchor is on the content wrapper so it skips the section's top
           padding; the navbar offset comes from html { scroll-padding-top }. */}

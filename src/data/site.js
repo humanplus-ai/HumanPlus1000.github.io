@@ -415,8 +415,16 @@ export const representativeTasks = {
  *   index       — ordinal drawn large and low-contrast above the title
  *   title       — full paper title, never abbreviated
  *   year        — e.g. '2026'
- *   venue       — e.g. 'ACM Transactions on Graphics'
+ *   venue       — e.g. 'SIGGRAPH', 'CVPR'
  *   venueNote   — parenthetical conference, e.g. '(SIGGRAPH Asia)'; '' drops it
+ *                 (unused today: the conference name IS the venue)
+ *   image       — teaser still shown between the venue line and the title,
+ *                 relative (no leading "/") like every other asset on the
+ *                 site. Source originals live in 图片素材\research and were
+ *                 COPIED into public/images/research/ — the originals stay
+ *                 untouched. All three are 16:9 (1568×882, 2310×1299,
+ *                 1641×923), which is why the frame can be `aspect-video`
+ *                 without ever cropping or distorting one of them.
  *   awards      — optional accent label lines, e.g. ['BEST PAPER AWARD',
  *                 'SIGGRAPH 2025']; [] drops the label entirely
  *   description — one paragraph, used as-is
@@ -430,14 +438,21 @@ export const research = {
   description:
     'Research on wearable sensing, inertial motion capture, and human motion understanding.',
 
+  /**
+   * "More" button under the header copy — the only filled brand-blue control
+   * on the page. Opens in a new tab (target/rel are set by the component).
+   */
+  more: { label: 'More', url: 'https://www.humanplus.xyz/' },
+
   papers: [
     {
       index: '01',
       title:
         'CLOTHO: Canonicalizing IMUs from Loose Inertial Garments for Accurate Human Motion Tracking',
       year: '2026',
-      venue: 'ACM Transactions on Graphics',
-      venueNote: '(SIGGRAPH Asia)',
+      venue: 'SIGGRAPH Asia',
+      venueNote: '',
+      image: 'images/research/01.png',
       awards: [],
       description:
         'We introduce CLOTHO, an IMU canonicalization framework for garment-based inertial motion capture, achieving state-of-the-art accuracy, zero-shot generalization to unseen garments, and robust long-term tracking.',
@@ -448,8 +463,9 @@ export const research = {
       title:
         'Transformer IMU Calibrator: Dynamic On-body IMU Calibration for Inertial Motion Capture',
       year: '2025',
-      venue: 'ACM Transactions on Graphics',
-      venueNote: '(SIGGRAPH)',
+      venue: 'SIGGRAPH',
+      venueNote: '',
+      image: 'images/research/02.jpg',
       awards: ['Best Paper Award', 'SIGGRAPH 2025'],
       description:
         'We propose a novel dynamic calibration method for sparse inertial motion capture systems, which is the first to break the restrictive absolute static assumption in IMU calibration, the first to achieve implicit IMU calibration, as well as the first to enable long-term and accurate motion capture using sparse IMUs.',
@@ -465,6 +481,7 @@ export const research = {
       year: '2024',
       venue: 'CVPR',
       venueNote: '',
+      image: 'images/research/03.jpg',
       awards: [],
       description:
         'We introduce Loose Inertial Poser, a novel motion capture solution with high wearing comfortableness, by integrating four Inertial Measurement Units (IMUs) into a loose-wear jacket.',

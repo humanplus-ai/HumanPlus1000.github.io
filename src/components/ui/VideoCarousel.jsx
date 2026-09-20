@@ -1,41 +1,94 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 /**
- * Horizontal video carousel — ONE large clip at a time, full width, looping
- * in both directions, with one pagination dot per clip.
+ * Coverflow video carousel — the ACTIVE clip sits dead centre at full 16:9,
+ * the previous and next clips are scaled-down, dimmed PREVIEWS that slide
+ * UNDERNEATH it, and all three move together on every step.
  *
- * Why it is built this way:
+ * How the geometry works (see `.cf-stage` in index.css for the numbers):
  *
- * - **One slide, always.** `PER_VIEW` is 1 at every breakpoint (the CSS
- *   `--per-view` mirrors it), so the clip fills the whole content area on
- *   desktop, tablet and mobile alike. The slide is 16:9 with
- *   `object-contain`, so the clip keeps its own proportions instead of
- *   being stretched or cropped to fill the frame.
- * - **Loop without a jump.** The track renders the list twice (`looped`), so
- *   "next" from the last page can slide onto the clone of page 0. Once the
- *   slide finishes, `slot` is snapped back to 0 with the transition disabled
- *   — the same trick as the site's `.marquee`, just in JS. "Prev" from page 0
- *   is the mirror image: jump (no transition) onto the clone, then slide one
- *   step left.
- * - **Loading.** A clip only gets a `src` while it is the active slide, so
- *   exactly ONE of the 9 files is ever in flight. The poster (a still frame
- *   grabbed from the clip) holds every other slide, so the row never
- *   collapses into empty boxes.
- * - **Playback.** Only the active slide plays, and only while the carousel is
- *   itself on screen. Everything else is paused AND unloaded. Muted +
- *   playsInline + the muted assert is what makes playback legal without a
- *   gesture; some browsers drop React's `muted` prop on first mount.
- * - **Input.** Arrows, dots, touch swipe and (while the carousel is on
- *   screen) the left/right arrow keys all drive the same `next` / `prev`.
+ * - **Every slide is absolutely stacked, not laid out in a row.** Each one
+ *   carries `--cf-n`, its signed distance from the centre (0 = active,
+ *   ±1 = preview, ±2 = parked off-frame). The transform is derived from that
+ *   single number, so a step is one number animating per slide — which is
+ *   what produces the continuous three-up movement instead of two elements
+ *   swapping places.
+ * - **`scale` reads the `--cf-side-scale` variable**, so each breakpoint can
+ *   pick its own preview size without a JS media query having to mirror the
+ *   CSS. `--cf-active-w` sets how wide the centre clip is; the stage height
+ *   is derived from it (see the padding-bottom note below).
+ * - **Overlap is structural, not a margin.** `--cf-step` is deliberately
+ *   SMALLER than 100% of the slide's own width, so a preview lands inside
+ *   the centre slide's footprint. Combined with opacity/z-index it is the
+ *   active slide — which has an opaque frame and the highest z-index — that
+ *   covers the previews' inner edges. Nothing ever overlaps by accident.
+ * - **Loop without a jump.** The list is rendered twice, so "next" past the
+ *   last clip steps onto the clone of clip 0 and then snaps back to the real
+ *   clip 0 with transitions disabled (`is-snapping`) — the two look
+ *   identical, so nothing moves.
+ * - **Loading & playback.** Only the CENTRE slide gets a `src`, so exactly
+ *   one file is in flight; previews show their poster still. Only the centre
+ *   slide plays, and only while the carousel is itself on screen. Everything
+ *   else is paused. Muted + playsInline + the muted assert is what makes
+ *   that playback legal without a gesture.
+ * - **Input.** Arrows, dots, touch swipe, clicking a preview, and the
+ *   left/right arrow keys (while the carousel is on screen) all drive the
+ *   same `next` / `prev` / `goto`.
  */
 
-const TRANSITION_MS = 600
+const TRANSITION_MS = 550
 
-/** One slide visible at a time — mirrored by `--per-view` in index.css. */
-const PER_VIEW = 1
+/** Park distance — anything further than a preview sits here, invisible. */
+const MAX_OFFSET = 2
 
-/** One slide. `src` is withheld until it is visible — that is the lazy part. */
-function CarouselSlide({ video, active, playing }) {
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
+
+/**
+ * Look of one slide given its distance from the centre.
+ *
+ * `scale` deliberately references the CSS variable instead of a JS number:
+ * the desktop and mobile preview sizes then live in one place (index.css)
+ * and can never drift from each other.
+ */
+function look(distance) {
+  const steps = Math.abs(distance)
+
+  /* ACTIVE — full size, undimmed, on top. */
+  if (steps === 0) {
+    return {
+      '--cf-scale': '1',
+      '--cf-opacity': '1',
+      '--cf-brightness': '1',
+      '--cf-z': 30,
+    }
+  }
+
+  /* PREVIEW — smaller, dimmed, pushed behind the active slide. */
+  if (steps === 1) {
+    return {
+      '--cf-scale': 'var(--cf-side-scale)',
+      '--cf-opacity': '0.32',
+      '--cf-brightness': '0.55',
+      '--cf-z': 20,
+    }
+  }
+
+  /* PARKED — waiting one step away from becoming a preview. Keeping the node
+     mounted (rather than rendering a window of nodes) is what lets it
+     animate in instead of popping. */
+  return {
+    '--cf-scale': 'calc(var(--cf-side-scale) * 0.72)',
+    '--cf-opacity': '0',
+    '--cf-brightness': '0.4',
+    '--cf-z': 10,
+  }
+}
+
+/**
+ * One slide. `active` drives both the source and playback; `offset` (the
+ * signed distance from the centre) drives every visual property.
+ */
+function CarouselSlide({ video, offset, active, playing, onSelect }) {
   const videoRef = useRef(null)
 
   /* Muted assert — see the note at the top of the file. */
@@ -51,24 +104,35 @@ function CarouselSlide({ video, active, playing }) {
       const played = el.play()
       if (played && typeof played.catch === 'function') played.catch(() => {})
     } else {
-      /* Not visible (or the carousel is off-screen) → stop decoding.
+      /* Not centred (or the carousel is off-screen) → stop decoding.
          This branch has to cover `!active` too: pausing only when `active`
-         leaves the clips that just scrolled out of the window running. */
+         leaves the clips that just stepped out of the centre running. */
       el.pause()
     }
   }, [active, playing])
 
+  /* Clamped so parked slides stack at the park distance instead of flying
+     further out the further away they are. */
+  const visual = look(offset)
+
   return (
-    /* No horizontal gutter: with one slide per view the padding would only
-       shave width off the clip, and this slide is meant to read as the
-       module's main visual. */
-    <div className="carousel-item">
-      {/* 16:9 + object-contain → the clip keeps its own proportions; the
-          frame never crops or stretches it to fill. */}
-      <div className="group relative aspect-video w-full overflow-hidden border border-white/10 bg-gradient-to-br from-ink2 to-ink3 transition-colors duration-300 hover:border-brandLine">
+    <div
+      className="cf-item"
+      style={{ '--cf-n': clamp(offset, -MAX_OFFSET, MAX_OFFSET), ...visual }}
+      aria-hidden={active ? undefined : true}
+      /* Only previews are clickable — the active slide has nothing to do. */
+      onClick={active ? undefined : onSelect}
+    >
+      {/* 16:9 comes from the stage's own aspect rules; `object-contain`
+          inside keeps the clip whole — never cropped, never stretched. */}
+      <div
+        className={`group relative h-full w-full overflow-hidden border border-white/10 bg-gradient-to-br from-ink2 to-ink3 transition-colors duration-300 ${
+          active ? 'hover:border-brandLine' : ''
+        }`}
+      >
         <video
           ref={videoRef}
-          /* undefined until visible → nothing is downloaded for hidden slides */
+          /* undefined until centred → nothing is downloaded for the rest */
           src={active ? video.src : undefined}
           poster={video.poster}
           muted
@@ -76,14 +140,18 @@ function CarouselSlide({ video, active, playing }) {
           playsInline
           preload="none"
           tabIndex={-1}
-          className="h-full w-full object-contain outline-none"
+          className={`h-full w-full object-contain outline-none ${
+            active ? '' : 'pointer-events-none'
+          }`}
         />
 
         {/* Brand hover wash — a flat 5% tint, no gradient and no glow */}
-        <span
-          className="pointer-events-none absolute inset-0 bg-brandSoft opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          aria-hidden="true"
-        />
+        {active && (
+          <span
+            className="pointer-events-none absolute inset-0 bg-brandSoft opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            aria-hidden="true"
+          />
+        )}
       </div>
     </div>
   )
@@ -95,7 +163,7 @@ function Arrow({ direction, onClick, label }) {
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="group shrink-0 flex h-10 w-10 items-center justify-center border border-white/15 text-white/60 transition-colors duration-300 hover:border-brandLine hover:text-brand md:h-12 md:w-12 focus:outline-none focus-visible:ring-1 focus-visible:ring-brandLine"
+      className="group relative z-40 shrink-0 flex h-10 w-10 items-center justify-center border border-white/15 text-white/60 transition-colors duration-300 hover:border-brandLine hover:text-brand md:h-12 md:w-12 focus:outline-none focus-visible:ring-1 focus-visible:ring-brandLine"
     >
       <svg
         viewBox="0 0 24 24"
@@ -153,8 +221,10 @@ export default function VideoCarousel({ videos }) {
     const target = slot + 1
     setSlot(target)
 
-    /* Landed on the clone → it looks identical to page 0, so snap back
-       once the slide has finished. */
+    /* Landed on the clone → it looks identical to page 0, so snap back once
+       the slide has finished. Transitions are off for that one frame,
+       otherwise every slide would animate from the clone position to the
+       real one and visibly shuffle the whole row. */
     if (target >= count) {
       after(TRANSITION_MS + 60, () => {
         setAnim(false)
@@ -171,8 +241,8 @@ export default function VideoCarousel({ videos }) {
       setSlot(slot - 1)
       return
     }
-    /* At page 0 → hop onto the clone with no transition, then slide one
-       step left so the movement still reads as "backwards". */
+    /* At page 0 → hop onto the clone with no transition, then step back one
+       so the movement still reads as "backwards". */
     setAnim(false)
     setSlot(count)
     requestAnimationFrame(() =>
@@ -215,44 +285,54 @@ export default function VideoCarousel({ videos }) {
   }
 
   /**
-   * Which rendered node is currently on screen.
+   * Circular distance from the centre.
    *
-   * Position-based (not modulo-based) on purpose: exactly `perView` nodes —
-   * one copy of each visible clip — ever carry a `src`, so no file is decoded
-   * twice. The trade-off is that during the one-frame loop hand-off the
-   * clone nodes pick the files up again; they are already in the browser
-   * cache by then, so it costs nothing.
+   * A plain `i - slot` would leave the LEFT PREVIEW missing at the first
+   * page — nothing sits to the left of index 0. Wrapping into the doubled
+   * range fixes it: at page 0 the previous clip is found at the far end of
+   * the second copy, which is exactly what a loop means. The only nodes that
+   * ever become visible are `0` (centre) and `±1` (previews); everything
+   * else sits further out and is invisible anyway.
    */
-  const isActive = (position) => position >= slot && position < slot + PER_VIEW
+  const distanceTo = (i) => {
+    const span = looped.length
+    let d = (((i - slot) % span) + span) % span
+    /* Fold the far half into negatives so the row is centred on the slot.
+       `d === count` is the duplicate of the centre — left far away. */
+    if (d > count) d -= span
+    return d
+  }
 
   return (
     <div>
       <div className="flex items-center gap-3 md:gap-5">
         <Arrow direction="left" onClick={prev} label="Previous videos" />
 
-        {/* Viewport — clips the track; the track is what moves. */}
+        {/* Stage — every slide is absolutely stacked inside it, and its
+            overflow does the clipping at the left and right edges.
+            `cf-shell` is what declares the layout variables (see index.css);
+            once there was also a `.cf-caption` above it, and this element
+            kept both roles — there is nothing between it and the arrows
+            now, so no space is reserved above the videos. */}
         <div
           ref={viewportRef}
-          className="relative flex-1 overflow-hidden"
+          className={`cf-shell cf-stage min-w-0 flex-1 ${anim ? '' : 'is-snapping'}`}
           style={{ touchAction: 'pan-y' }}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
-          <div
-            className={`carousel-track ${anim ? '' : 'no-anim'}`}
-            style={{ '--slot': slot }}
-          >
-            {looped.map((video, i) => (
-              <CarouselSlide
-                /* `i` is the position in the doubled track, which is what
-                   decides visibility — both copies share one source file */
-                key={`${video.id}-${i < count ? 'a' : 'b'}`}
-                video={video}
-                active={isActive(i)}
-                playing={inView}
-              />
-            ))}
-          </div>
+          {looped.map((video, i) => (
+            <CarouselSlide
+              /* `i` is the position in the doubled track, which is what
+                 decides visibility — both copies share one source file */
+              key={`${video.id}-${i < count ? 'a' : 'b'}`}
+              video={video}
+              offset={distanceTo(i)}
+              active={i === slot}
+              playing={inView}
+              onSelect={() => goto(i >= count ? i - count : i)}
+            />
+          ))}
         </div>
 
         <Arrow direction="right" onClick={next} label="Next videos" />

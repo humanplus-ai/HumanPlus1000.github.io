@@ -34,13 +34,46 @@ function PaperLink({ link }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Header — title left, copy + More button flush to the right edge     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The module's only FILLED brand-blue control, parked at the TOP-RIGHT of
+ * the header while the title and its description stay exactly where they
+ * were on the left. Everything else here is hairlines and low-contrast
+ * mono, so the pill is what gives the header a second focal point.
+ *
+ * Deliberately restrained: no border, no glow, no gradient, no scale — the
+ * hover is a half-step lighter fill plus the arrow's usual 4px slide.
+ */
+function MoreButton({ link }) {
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group/more inline-flex shrink-0 items-center gap-2 rounded-full bg-brand pl-6 pr-5 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-[#6cabfb] focus:outline-none focus-visible:ring-1 focus-visible:ring-brandLine"
+    >
+      <span>{link.label}</span>
+      <span
+        className="transition-transform duration-300 group-hover/more:translate-x-1"
+        aria-hidden="true"
+      >
+        →
+      </span>
+    </a>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /* One paper — ordinal, title, venue stack, description, links         */
 /* ------------------------------------------------------------------ */
 
 /**
  * `h-full` + `flex-col` + `mt-auto` on the links is what makes three
  * blocks of unequal text length share one bottom edge: the grid stretches
- * every cell to the row height, then flex pushes the link row down.
+ * every cell to the row height, then flex pushes the link row down. All three
+ * teasers share one 16:9 frame, so adding them does not break that.
  *
  * The whole block is a `group`, but its only hover feedback is the ordinal
  * lifting from 25% to 45% brand blue — no fill, no border, no lift. Cards
@@ -80,21 +113,42 @@ function Paper({ paper }) {
         )}
       </div>
 
-      {/* Full paper title — never abbreviated, wraps naturally */}
-      <h3 className="mt-6 text-lg font-semibold leading-snug text-white md:text-xl">
-        {paper.title}
-      </h3>
-
       {/* Year / venue / conference — mono stack so each part can be read
-          separately without inventing punctuation in the data. */}
+          separately without inventing punctuation in the data. The WHOLE
+          line is brand blue (`text-brand`), including the year and the `·` —
+          it is the requirement for this module, and it is also the only
+          colour the line ever needs, so there is no per-paper flag. */}
       <div className="mt-5 space-y-1">
-        <p className="text-xs font-mono tracking-[0.15em] text-white/80">
+        <p className="text-xs font-mono tracking-[0.15em] text-brand">
           {paper.year} · {paper.venue}
         </p>
         {paper.venueNote && (
           <p className="text-xs font-mono tracking-[0.15em] text-mute">{paper.venueNote}</p>
         )}
       </div>
+
+      {/* Teaser — 16:9 because all three sources are 16:9 (1568×882,
+          2310×1299, 1641×923), so `aspect-video` + `object-cover` neither
+          crops nor squashes anything: the frame ratio IS the source ratio.
+          Nothing else here — no card, no border, no shadow, just a 4px radius
+          (the same rounding used by the module's other flat surfaces).
+          `loading="lazy"` keeps three ~900kB files off the critical path. */}
+      {paper.image && (
+        <div className="mt-6 aspect-video w-full overflow-hidden rounded-[4px] bg-white/5">
+          <img
+            src={paper.image}
+            alt={`${paper.venue} ${paper.year} — ${paper.title}`}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* Full paper title — never abbreviated, wraps naturally */}
+      <h3 className="mt-6 text-lg font-semibold leading-snug text-white md:text-xl">
+        {paper.title}
+      </h3>
 
       <p className="mt-6 text-sm leading-relaxed text-white/55">{paper.description}</p>
 
@@ -135,18 +189,31 @@ export default function ResearchSection() {
           padding does not push the heading below the fold. (Same reason
           DownloadSection anchors its inner wrapper.) */}
       <div id="research" className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10">
-        {/* Main title */}
-        <Reveal
-          as="h2"
-          className="font-black tracking-tight leading-[1.2] text-[clamp(1.25rem,4vw,3rem)]"
-        >
-          {research.title}
-        </Reveal>
+        {/* Header — the title and its description keep the layout they have
+            always had, stacked on the left. The only addition is the More
+            pill: beside that stack on desktop, dropped below it on mobile
+            (`flex-col` with `md:flex-row`), always flush to the right edge
+            of the container so it reads as a corner action. */}
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-12">
+          <div>
+            {/* Main title */}
+            <Reveal
+              as="h2"
+              className="font-black tracking-tight leading-[1.2] text-[clamp(1.25rem,4vw,3rem)]"
+            >
+              {research.title}
+            </Reveal>
 
-        {/* Description */}
-        <Reveal delay={1} className="mt-6">
-          <p className="max-w-xl text-base text-white/70">{research.description}</p>
-        </Reveal>
+            {/* Description — unchanged position, measure and type */}
+            <Reveal delay={1} className="mt-6">
+              <p className="max-w-xl text-base text-white/70">{research.description}</p>
+            </Reveal>
+          </div>
+
+          <Reveal delay={2} className="self-end md:self-auto">
+            <MoreButton link={research.more} />
+          </Reveal>
+        </div>
 
         {/* Papers — 3 across on desktop, 2 on tablet, stacked on mobile */}
         <div className="mt-20 grid grid-cols-1 gap-y-14 md:grid-cols-2 md:gap-x-10 md:gap-y-16 lg:grid-cols-3 lg:gap-x-0 lg:gap-y-0">

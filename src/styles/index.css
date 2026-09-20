@@ -112,31 +112,97 @@
   }
 
   /* ------------------------------------------------------------------
-     Video carousel (03 in MULTIMODAL DATA)
-     `--per-view` is the single source for "how many slides fit": the slide
-     width and the slide offset are both derived from it, so the breakpoints
-     can never drift apart. `--slot` is set inline by VideoCarousel.
+     Coverflow carousel — OVERVIEW → HumanPlus-1000 → Carousel
 
-     2026-09-20: this is now a SINGLE-SLIDE carousel — one large demo clip
-     fills the whole content area at every breakpoint (mobile included), so
-     `--per-view` stays 1 and the tablet/desktop overrides are gone. Do not
-     re-add them: the brief is explicitly "one demo at a time, full width".
+     Slides are NOT laid out in a row: every one of them is absolutely
+     stacked and positioned purely from `--cf-n`, its signed distance from
+     the centre (0 = active, ±1 = preview, ±2 = parked off-frame). One
+     number per slide animates per step, which is what makes all three move
+     together.
+
+     Three numbers describe the whole layout:
+       --cf-active-w    width of the CENTRE slide (share of the stage)
+       --cf-step        one step sideways, as a share of the slide's OWN
+                        width — deliberately well under 100%, which is what
+                        makes a preview land UNDER the centre slide
+       --cf-side-scale  preview size relative to the centre slide
+     The stage height follows from `--cf-active-w`, so changing sizes never
+     desynchronises desktop and mobile.
+
+     ⚠️ The stage height comes from `padding-bottom`, not from its children:
+     every slide is absolute, so the stage would collapse to 0 and
+     `overflow-hidden` would clip the entire carousel away.
+     ⚠️ Keep previews inside the stage. Their overshoot past the stage edge
+     is clipped on purpose — the requirement is exactly that they are partly
+     hidden, but they must never spill onto the page.
      ------------------------------------------------------------------ */
-  .carousel-track {
-    --per-view: 1;
-    --slot: 0;
-    display: flex;
-    align-items: stretch;
-    transform: translateX(calc(-1 * var(--slot) * (100% / var(--per-view))));
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  .cf-shell {
+    --cf-active-w: 56%;
+    --cf-step: 66%;
+    --cf-side-scale: 0.66;
+    --cf-duration: 0.55s;
+    --cf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Mobile — same three-up composition, tighter reveal: the centre clip
+     takes a wider share of a much narrower stage, so the previews must
+     shrink with it or there is no room left to reveal them at all. Still no
+     horizontal page scroll: nothing here is ever wider than the stage. */
+  @media (max-width: 767px) {
+    .cf-shell {
+      --cf-active-w: 72%;
+      --cf-side-scale: 0.5;
+      --cf-step: 65%;
+    }
+  }
+
+  .cf-stage {
+    position: relative;
+    width: 100%;
+    /* 16:9 of the CENTRE slide — `--cf-active-w` × 9/16. Written as a share
+       of the stage width because that is what padding-bottom resolves
+       against. Must track `--cf-active-w` exactly. */
+    padding-bottom: calc(var(--cf-active-w) * 9 / 16);
+    overflow: hidden;
+  }
+  /* Mobile — same three-up composition, tighter reveal: the centre clip
+     takes a wider share of a much narrower stage, so the previews must
+     shrink with it or there is no room left to reveal them at all. Still no
+     horizontal page scroll: nothing here is ever wider than the stage. */
+  @media (max-width: 767px) {
+    .cf-stage {
+      --cf-active-w: 72%;
+      --cf-side-scale: 0.5;
+      --cf-step: 65%;
+    }
+  }
+
+  .cf-item {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--cf-active-w);
+    /* 16:9 lives on the slide itself, so it holds at every breakpoint and
+       `object-contain` can show the whole clip without cropping it. */
+    aspect-ratio: 16 / 9;
+    transform-origin: 50% 50%;
+    transform: translateX(-50%)
+      translateX(calc(var(--cf-n, 0) * var(--cf-step)))
+      scale(var(--cf-scale, 1));
+    opacity: var(--cf-opacity, 1);
+    z-index: var(--cf-z, 1);
+    filter: brightness(var(--cf-brightness, 1));
+    transition: transform var(--cf-duration) var(--cf-ease),
+      opacity var(--cf-duration) ease-out, filter var(--cf-duration) ease-out;
+    will-change: transform, opacity;
   }
   /* Set for one frame while the loop snaps back — no visible slide back. */
-  .carousel-track.no-anim {
+  .cf-stage.is-snapping .cf-item {
     transition: none;
   }
-  .carousel-item {
-    flex: 0 0 calc(100% / var(--per-view));
-    min-width: 0;
+  @media (prefers-reduced-motion: reduce) {
+    .cf-item {
+      transition-duration: 0.01ms;
+    }
   }
 
   /* ------------------------------------------------------------------

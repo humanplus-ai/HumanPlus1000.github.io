@@ -584,8 +584,8 @@ export const products = {
  * in `rows`, and both tables share a single `SpecTable` component.
  *
  *   `accent: true` → the value is painted brand blue. Only the handful of
- *   headline numbers carries it (11-IMU, BNO085, 30 Hz, Up to 10 h /
- *   ICM-42688-P, 165°, 3840 × 1200, 30 fps); everything else stays white or
+ *   headline numbers carries it (11-IMU, 30 Hz, Up to 10 h / 165°,
+ *   3840 × 1200, 30 fps); everything else stays white or
  *   silver so the blue reads as emphasis rather than decoration.
  *
  * Not a data grid with panels: rows are hairline-separated pairs (label →
@@ -610,7 +610,6 @@ export const productSpecs = {
       name: 'MOTION-0',
       rows: [
         { label: 'Configuration', value: '11-IMU', accent: true },
-        { label: 'IMU Sensor', value: 'BNO085', accent: true },
         { label: 'Sampling Rate', value: '30 Hz (Default)', accent: true },
         { label: 'Data Output', value: '3-Axis Acceleration, Quaternion' },
         {
@@ -625,7 +624,6 @@ export const productSpecs = {
       index: '02',
       name: 'VISION-0',
       rows: [
-        { label: 'IMU Sensor', value: 'ICM-42688-P', accent: true },
         { label: 'Diagonal Field of View (FOV)', value: '165°', accent: true },
         { label: 'Binocular Resolution', value: '3840 × 1200', accent: true },
         { label: 'Frame Rate', value: '30 fps', accent: true },

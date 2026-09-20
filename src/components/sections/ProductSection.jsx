@@ -25,6 +25,24 @@ export default function ProductSection({ item }) {
 
   return (
     <section className="relative border-t border-white/5">
+      {/* Optional showcase banner — a full-width lifestyle shot shown ABOVE
+          the band for Motion-0. Native aspect ratio so nothing is cropped;
+          same 4px radius as every other media block. pt mirrors the band's
+          own top padding so it reads as one continuous unit with the hero
+          above; pb keeps a natural gap before the `01 — MOTION-0` band. */}
+      {item.showcaseImage && (
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10 pt-2 md:pt-3 pb-16 md:pb-24">
+          <Reveal>
+            <img
+              src={item.showcaseImage}
+              alt={item.showcaseAlt || item.name}
+              loading="lazy"
+              className="w-full h-auto rounded-[4px]"
+            />
+          </Reveal>
+        </div>
+      )}
+
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10 py-16 md:py-0 md:min-h-[56vh] flex items-center">
         <div className={`w-full grid items-center gap-10 md:gap-16 ${gridCols}`}>
           {/* Visual */}

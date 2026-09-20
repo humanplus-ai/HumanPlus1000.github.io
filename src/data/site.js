@@ -547,6 +547,10 @@ export const products = {
       imageSrc: 'images/products/motion-0.png',
       videoSrc: null,
       placeholderLabel: 'PRODUCT IMAGE',
+      /* Full-width lifestyle banner rendered under this band (optional —
+         omit the key and nothing renders). Same 4px radius as other media. */
+      showcaseImage: 'images/products/motion-0-banner.jpg',
+      showcaseAlt: 'Motion-0 garment worn in everyday kitchen scenes',
       halo: true,
       reverse: false,
     },
@@ -561,6 +565,66 @@ export const products = {
       placeholderLabel: 'PRODUCT IMAGE',
       halo: true,
       reverse: true,
+    },
+  ],
+}
+
+/**
+ * TECHNICAL SPECIFICATIONS — rendered on /#/products below the two bands.
+ *
+ * Structured arrays, never hand-written rows: a new parameter is one entry
+ * in `rows`, and both tables share a single `SpecTable` component.
+ *
+ *   `accent: true` → the value is painted brand blue. Only the handful of
+ *   headline numbers carries it (11-IMU, BNO085, 30 Hz, Up to 10 h /
+ *   ICM-42688-P, 165°, 3840 × 1200, 30 fps); everything else stays white or
+ *   silver so the blue reads as emphasis rather than decoration.
+ *
+ * Not a data grid with panels: rows are hairline-separated pairs (label →
+ * value), stacked vertically — the two tables are NEVER side by side,
+ * because Vision-0's parameter names are long and a split column would
+ * squeeze them.
+ */
+export const productSpecs = {
+  title: 'TECHNICAL SPECIFICATIONS',
+  subtitle: 'Motion-0 & Vision-0',
+  description: 'Core specifications of the HumanPlus Capture System.',
+
+  /* Column captions — mono, uppercase, silver; no filled header row. */
+  columns: {
+    specification: 'SPECIFICATION',
+    details: 'DETAILS',
+  },
+
+  tables: [
+    {
+      index: '01',
+      name: 'MOTION-0',
+      rows: [
+        { label: 'Configuration', value: '11-IMU', accent: true },
+        { label: 'IMU Sensor', value: 'BNO085', accent: true },
+        { label: 'Sampling Rate', value: '30 Hz (Default)', accent: true },
+        { label: 'Data Output', value: '3-Axis Acceleration, Quaternion' },
+        {
+          label: 'Communication & Synchronization',
+          value: '2.4 GHz Wi-Fi / UDP; NTP ≤ 20 ms',
+        },
+        { label: 'Effective Range', value: 'Up to 20 m (Indoor)' },
+        { label: 'Battery Life', value: 'Up to 10 h', accent: true },
+      ],
+    },
+    {
+      index: '02',
+      name: 'VISION-0',
+      rows: [
+        { label: 'IMU Sensor', value: 'ICM-42688-P', accent: true },
+        { label: 'Diagonal Field of View (FOV)', value: '165°', accent: true },
+        { label: 'Binocular Resolution', value: '3840 × 1200', accent: true },
+        { label: 'Frame Rate', value: '30 fps', accent: true },
+        { label: 'Image Sensor', value: 'AR0234 (1/2.6")' },
+        { label: 'Maximum Effective Resolution', value: '1920 (H) × 1200 (V)' },
+        { label: 'Output Image Format', value: 'MJPEG / YUV2 (YUYV)' },
+      ],
     },
   ],
 }

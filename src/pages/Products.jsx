@@ -1,4 +1,5 @@
 import ProductSection from '../components/sections/ProductSection'
+import ProductSpecsSection from '../components/sections/ProductSpecsSection'
 import Reveal from '../components/ui/Reveal'
 import { products } from '../data/site'
 
@@ -14,7 +15,7 @@ export default function Products() {
   return (
     <div>
       {/* Hero — label + title + one line, then a lot of air */}
-      <section className="relative pt-36 pb-20 md:pt-48 md:pb-28">
+      <section className="relative pt-24 pb-20 md:pt-32 md:pb-28">
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10">
           <Reveal className="text-xs font-mono tracking-[0.3em] text-mute">{products.label}</Reveal>
 
@@ -37,6 +38,10 @@ export default function Products() {
       {products.items.map((item) => (
         <ProductSection key={item.index} item={item} />
       ))}
+
+      {/* TECHNICAL SPECIFICATIONS — closes the page with both spec tables,
+          stacked. Page-internal only: no nav entry, no route of its own. */}
+      <ProductSpecsSection />
     </div>
   )
 }

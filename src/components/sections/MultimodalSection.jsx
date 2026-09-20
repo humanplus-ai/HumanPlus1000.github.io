@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { multimodal } from '../../data/site'
 import Reveal from '../ui/Reveal'
-import VideoCarousel from '../ui/VideoCarousel'
 
 /* ------------------------------------------------------------------ */
 /* Modality column                                                     */
@@ -149,23 +148,6 @@ export default function MultimodalSection() {
               <ModalityColumn card={card} placeholderLabel={multimodal.placeholderLabel} />
             </Reveal>
           ))}
-        </div>
-
-        {/* 03 — the nine visualization clips as one horizontal carousel
-            (3 / 2 / 1 visible on desktop / tablet / mobile). Same hairline +
-            ordinal heading language as the two columns above; the carousel
-            owns its own arrows, pagination and playback gating. */}
-        <div className="mt-20 border-t border-white/10 pt-12 md:mt-24 md:pt-14">
-          <Reveal>
-            <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-white">
-              <span className="text-brand">{multimodal.visualizations.index}</span>
-              {multimodal.visualizations.title && ` / ${multimodal.visualizations.title}`}
-            </h3>
-          </Reveal>
-
-          <Reveal delay={1} className="mt-8">
-            <VideoCarousel videos={multimodal.visualizations.videos} />
-          </Reveal>
         </div>
       </div>
     </section>

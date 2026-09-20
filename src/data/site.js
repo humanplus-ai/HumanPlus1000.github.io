@@ -197,29 +197,66 @@ export const overview = {
    *  used by `hero.subtitle`: [{ text, strong }, ...].)
    */
   body: [
-    'The HumanPlus-1000 Embodied Motion Dataset is a large-scale, multi-modal, and continuously evolving human data infrastructure for embodied intelligence and robot learning.',
-    'HumanPlus-1000 integrates first-person vision, whole-body motion, hand movements, human-object interactions, and real-world changes into a unified spatiotemporal representation, capturing how humans perceive, act, interact, and change the world. It covers diverse real-world scenarios, including campus life, industrial operations, logistics, warehousing, and household activities.',
-    'Through standardized data collection, multi-modal synchronization, structured annotation, and quality control, HumanPlus-1000 provides a scalable data foundation for imitation learning, World-Human Model development, and real-world robot deployment.',
+    'HumanPlus-1000 integrates first-person vision, whole-body motion, hand movements, human-object interactions, and real-world changes into a unified spatiotemporal representation. It captures how humans perceive, act, and interact with the world across diverse real-world scenarios, including campus life, industrial operations, logistics, and household activities.',
+    'Through standardized data collection and multi-modal synchronization, HumanPlus-1000 provides a scalable data foundation for imitation learning, World-Human Model development, and real-world robot learning.',
   ],
 
   /* Text shown inside the frame while there is no real media */
   placeholderLabel: 'IMAGE PLACEHOLDER',
 
   /**
-   * Real overview image path (still fallback).
-   * null → the frame renders the rectangle placeholder.
+   * Poster / still fallback — the cover frame of 厨房v3, shown until the
+   * clip starts. Source: 图片素材\demo\厨房v3-封面.jpg (copied, original
+   * untouched); renamed to ASCII so the path stays safe in a URL.
    * Relative (no leading "/") so it also works under a Pages sub-path.
    */
-  imageSrc: 'images/overview/humanv4-cover.jpg',
+  imageSrc: 'images/overview/kitchen-v3-cover.jpg',
 
   /**
-   * Real overview video path — replaces the still image on the right.
-   * When set, the frame renders an autoplaying (muted + looped + inline)
-   * <video> using the exact same container, aspect ratio and object-cover
-   * fit as the image before it, so the module layout is unchanged.
+   * Real overview video — 厨房v3 (图片素材\demo\厨房v3.mp4, copied; original
+   * untouched, not re-encoded).
+   *
+   * ⚠️ NOT muted: this clip carries real audio, so it must not autoplay —
+   * browsers block unmuted autoplay. OverviewSection shows the poster plus a
+   * play button and hands playback to a user gesture. Do not "fix" a silent
+   * start by re-adding `muted`.
+   *
    * Relative (no leading "/") so it also works under a Pages sub-path.
    */
-  videoSrc: 'videos/overview/herov2.mp4',
+  videoSrc: 'videos/overview/kitchen-v3.mp4',
+
+  /**
+   * The single-clip demo carousel, rendered BELOW the HumanPlus-1000 text +
+   * video grid (moved here from Dataset / MULTIMODAL DATA on 2026-09-20 —
+   * Dataset now ends at 02 Human Motion).
+   *
+   * Nine clips, one horizontal carousel showing ONE clip at a time at every
+   * breakpoint. See ui/VideoCarousel.jsx.
+   *
+   * - src     — MP4, relative (no leading "/") so it resolves under a
+   *             GitHub Pages sub-path
+   * - poster  — still frame grabbed from the clip at ~1.5s, so a slide shows
+   *             real content before its video is allowed to download
+   *
+   * ⚠️ Source files were COPIED (not moved) from 图片素材\demo\sample1..9.mp4
+   *    into public/videos/visualizations/ and renamed sample-01..09.mp4, so
+   *    the folder order matches the carousel order. The originals are
+   *    untouched. sample-01 and sample-03 are 42MB / 35MB — see the note in
+   *    MEMORY.md about pushing large media to GitHub.
+   */
+  visualizations: {
+    videos: [
+      { id: 1, src: 'videos/visualizations/sample-01.mp4', poster: 'images/visualizations/sample-01.jpg' },
+      { id: 2, src: 'videos/visualizations/sample-02.mp4', poster: 'images/visualizations/sample-02.jpg' },
+      { id: 3, src: 'videos/visualizations/sample-03.mp4', poster: 'images/visualizations/sample-03.jpg' },
+      { id: 4, src: 'videos/visualizations/sample-04.mp4', poster: 'images/visualizations/sample-04.jpg' },
+      { id: 5, src: 'videos/visualizations/sample-05.mp4', poster: 'images/visualizations/sample-05.jpg' },
+      { id: 6, src: 'videos/visualizations/sample-06.mp4', poster: 'images/visualizations/sample-06.jpg' },
+      { id: 7, src: 'videos/visualizations/sample-07.mp4', poster: 'images/visualizations/sample-07.jpg' },
+      { id: 8, src: 'videos/visualizations/sample-08.mp4', poster: 'images/visualizations/sample-08.jpg' },
+      { id: 9, src: 'videos/visualizations/sample-09.mp4', poster: 'images/visualizations/sample-09.jpg' },
+    ],
+  },
 }
 
 /* ------------------------------------------------------------------ */
@@ -269,40 +306,11 @@ export const multimodal = {
   ],
 
   /**
-   * 03 — the visualization carousel, rendered below the two modality columns.
-   *
-   * Nine clips, one horizontal carousel (not a 3 × 3 grid): 3 visible on
-   * desktop, 2 on tablet, 1 on mobile. See ui/VideoCarousel.jsx.
-   *
-   * - src     — MP4, relative (no leading "/") so it resolves under a
-   *             GitHub Pages sub-path
-   * - poster  — still frame grabbed from the clip at ~1.5s, so a slide shows
-   *             real content before its video is allowed to download
-   *
-   * ⚠️ Source files were COPIED (not moved) from 图片素材\demo\sample1..9.mp4
-   *    into public/videos/visualizations/ and renamed sample-01..09.mp4, so
-   *    the folder order matches the carousel order. The originals are
-   *    untouched. sample-01 and sample-03 are 42MB / 35MB — see the note in
-   *    MEMORY.md about pushing large media to GitHub.
+   * 03 was removed on 2026-09-20: the nine-clip carousel moved down to the
+   * OVERVIEW module (`overview.visualizations`), so MULTIMODAL DATA ends at
+   * 02 Human Motion. Do not re-add a 03 block here — that would put the
+   * carousel on the page twice.
    */
-  visualizations: {
-    /* Ordinal heading. `title` is intentionally null — the block reads as a
-       bare "03" above the carousel; set a string to add " / <title>". */
-    index: '03',
-    title: null,
-
-    videos: [
-      { id: 1, src: 'videos/visualizations/sample-01.mp4', poster: 'images/visualizations/sample-01.jpg' },
-      { id: 2, src: 'videos/visualizations/sample-02.mp4', poster: 'images/visualizations/sample-02.jpg' },
-      { id: 3, src: 'videos/visualizations/sample-03.mp4', poster: 'images/visualizations/sample-03.jpg' },
-      { id: 4, src: 'videos/visualizations/sample-04.mp4', poster: 'images/visualizations/sample-04.jpg' },
-      { id: 5, src: 'videos/visualizations/sample-05.mp4', poster: 'images/visualizations/sample-05.jpg' },
-      { id: 6, src: 'videos/visualizations/sample-06.mp4', poster: 'images/visualizations/sample-06.jpg' },
-      { id: 7, src: 'videos/visualizations/sample-07.mp4', poster: 'images/visualizations/sample-07.jpg' },
-      { id: 8, src: 'videos/visualizations/sample-08.mp4', poster: 'images/visualizations/sample-08.jpg' },
-      { id: 9, src: 'videos/visualizations/sample-09.mp4', poster: 'images/visualizations/sample-09.jpg' },
-    ],
-  },
 }
 
 /* ------------------------------------------------------------------ */

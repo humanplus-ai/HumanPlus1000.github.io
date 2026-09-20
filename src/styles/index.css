@@ -116,6 +116,11 @@
      `--per-view` is the single source for "how many slides fit": the slide
      width and the slide offset are both derived from it, so the breakpoints
      can never drift apart. `--slot` is set inline by VideoCarousel.
+
+     2026-09-20: this is now a SINGLE-SLIDE carousel — one large demo clip
+     fills the whole content area at every breakpoint (mobile included), so
+     `--per-view` stays 1 and the tablet/desktop overrides are gone. Do not
+     re-add them: the brief is explicitly "one demo at a time, full width".
      ------------------------------------------------------------------ */
   .carousel-track {
     --per-view: 1;
@@ -132,16 +137,6 @@
   .carousel-item {
     flex: 0 0 calc(100% / var(--per-view));
     min-width: 0;
-  }
-  @media (min-width: 768px) {
-    .carousel-track {
-      --per-view: 2;
-    }
-  }
-  @media (min-width: 1024px) {
-    .carousel-track {
-      --per-view: 3;
-    }
   }
 
   /* ------------------------------------------------------------------

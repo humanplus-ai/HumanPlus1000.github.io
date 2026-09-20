@@ -45,29 +45,40 @@ function PaperLink({ link }) {
  * The whole block is a `group`, but its only hover feedback is the ordinal
  * lifting from 25% to 45% brand blue — no fill, no border, no lift. Cards
  * are what this module is deliberately not.
+ *
+ * Meta row: ordinal on the left, optional award on the right, one flex
+ * row. Its height is driven by the ordinal alone (the two-line award label
+ * is ~28px, well under the numeral's 40–56px), so Paper 02's title starts
+ * at exactly the same y as Papers 01 and 03 — the award can never push it
+ * down.
  */
 function Paper({ paper }) {
   return (
     <article className="group flex h-full flex-col">
-      {/* Ordinal — large, low-contrast brand blue. It is a numeral, which is
-          one of the few places this page spends the brand colour. */}
-      <div className="text-[clamp(2.5rem,4vw,3.5rem)] font-black leading-none tracking-tight text-brand/25 transition-colors duration-300 group-hover:text-brand/45">
-        {paper.index}
-      </div>
-
-      {/* Accent label — only rendered when a paper carries an award */}
-      {paper.awards.length > 0 && (
-        <div className="mt-6 inline-flex w-fit flex-col border border-brandLine bg-brandSoft px-3 py-2">
-          {paper.awards.map((line) => (
-            <span
-              key={line}
-              className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand"
-            >
-              {line}
-            </span>
-          ))}
+      {/* Meta row — fixed structure on every paper: number left, optional
+          award right, nothing else. */}
+      <div className="flex items-start justify-between gap-6">
+        {/* Ordinal — large, low-contrast brand blue. It is a numeral, which
+            is one of the few places this page spends the brand colour. */}
+        <div className="text-[clamp(2.5rem,4vw,3.5rem)] font-black leading-none tracking-tight text-brand/25 transition-colors duration-300 group-hover:text-brand/45">
+          {paper.index}
         </div>
-      )}
+
+        {/* Award — bare two-line mono label, no badge box, no border, no
+            margin of its own. */}
+        {paper.awards.length > 0 && (
+          <div className="flex flex-col items-end gap-1 pt-1 text-right">
+            {paper.awards.map((line) => (
+              <span
+                key={line}
+                className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand"
+              >
+                {line}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Full paper title — never abbreviated, wraps naturally */}
       <h3 className="mt-6 text-lg font-semibold leading-snug text-white md:text-xl">

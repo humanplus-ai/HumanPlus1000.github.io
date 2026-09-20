@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import ProductSection from '../components/sections/ProductSection'
 import Reveal from '../components/ui/Reveal'
 import { products } from '../data/site'
@@ -10,30 +9,6 @@ import { products } from '../data/site'
  * Everything comes from `products` in src/data/site.js, so copy and assets
  * are edited in one place. English only, matching the rest of the site.
  */
-
-/**
- * The horizontal band that separates two product sections.
- *
- * Not a card and not a divider line: a full-width dark-grey strip (#16181C →
- * #22252B → #16181C) whose gradient drifts sideways very slowly (26s per
- * pass). It gives the page a horizontal rhythm and keeps the eye moving
- * between products. The radial overlay dissolves both ends into the page
- * background so the strip never reads as a hard-edged block.
- */
-function BandDivider() {
-  return (
-    <div className="relative h-20 overflow-hidden md:h-28" aria-hidden="true">
-      <span className="sheen-track sheen-gradient absolute inset-y-0 left-0 w-[200%]" />
-      <span
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 70% 100% at 50% 50%, rgba(10,10,10,0) 30%, #0a0a0a 100%)',
-        }}
-      />
-    </div>
-  )
-}
 
 export default function Products() {
   return (
@@ -57,12 +32,10 @@ export default function Products() {
         </div>
       </section>
 
-      {/* The bands — a sheen strip sits between consecutive products */}
-      {products.items.map((item, i) => (
-        <Fragment key={item.index}>
-          {i > 0 && <BandDivider />}
-          <ProductSection item={item} />
-        </Fragment>
+      {/* The bands — products follow one another with no divider between
+          them; the sections' own top/bottom padding carries the rhythm. */}
+      {products.items.map((item) => (
+        <ProductSection key={item.index} item={item} />
       ))}
     </div>
   )

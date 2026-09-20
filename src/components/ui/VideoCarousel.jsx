@@ -1,54 +1,38 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 /**
- * Horizontal video carousel — 1 / 2 / 3 slides visible on mobile / tablet /
- * desktop, looping in both directions, with one pagination dot per clip.
+ * Horizontal video carousel — ONE large clip at a time, full width, looping
+ * in both directions, with one pagination dot per clip.
  *
  * Why it is built this way:
  *
+ * - **One slide, always.** `PER_VIEW` is 1 at every breakpoint (the CSS
+ *   `--per-view` mirrors it), so the clip fills the whole content area on
+ *   desktop, tablet and mobile alike. The slide is 16:9 with
+ *   `object-contain`, so the clip keeps its own proportions instead of
+ *   being stretched or cropped to fill the frame.
  * - **Loop without a jump.** The track renders the list twice (`looped`), so
  *   "next" from the last page can slide onto the clone of page 0. Once the
  *   slide finishes, `slot` is snapped back to 0 with the transition disabled
  *   — the same trick as the site's `.marquee`, just in JS. "Prev" from page 0
  *   is the mirror image: jump (no transition) onto the clone, then slide one
  *   step left.
- * - **Loading.** A clip only gets a `src` while it is one of the visible
- *   slides, so at most 3 of the 9 files are ever in flight. The poster (a
- *   still frame grabbed from the clip) holds every other slide, so the row
- *   never collapses into empty boxes.
- * - **Playback.** Only visible slides play, and only while the carousel is
- *   itself on screen. Everything else is paused and unloaded. Muted +
+ * - **Loading.** A clip only gets a `src` while it is the active slide, so
+ *   exactly ONE of the 9 files is ever in flight. The poster (a still frame
+ *   grabbed from the clip) holds every other slide, so the row never
+ *   collapses into empty boxes.
+ * - **Playback.** Only the active slide plays, and only while the carousel is
+ *   itself on screen. Everything else is paused AND unloaded. Muted +
  *   playsInline + the muted assert is what makes playback legal without a
  *   gesture; some browsers drop React's `muted` prop on first mount.
- *
- * Slide widths and the slide offset live in CSS (`--per-view`), not JS, so
- * the responsive breakpoints stay in one place. JS mirrors the same number
- * (`perView`) because it needs it to decide which clips count as visible.
+ * - **Input.** Arrows, dots, touch swipe and (while the carousel is on
+ *   screen) the left/right arrow keys all drive the same `next` / `prev`.
  */
 
 const TRANSITION_MS = 600
 
-/** Breakpoints mirrored from the CSS (`--per-view`). */
-function usePerView() {
-  const [perView, setPerView] = useState(1)
-
-  useEffect(() => {
-    const tablet = window.matchMedia('(min-width: 768px)')
-    const desktop = window.matchMedia('(min-width: 1024px)')
-
-    const update = () => setPerView(desktop.matches ? 3 : tablet.matches ? 2 : 1)
-    update()
-
-    tablet.addEventListener('change', update)
-    desktop.addEventListener('change', update)
-    return () => {
-      tablet.removeEventListener('change', update)
-      desktop.removeEventListener('change', update)
-    }
-  }, [])
-
-  return perView
-}
+/** One slide visible at a time — mirrored by `--per-view` in index.css. */
+const PER_VIEW = 1
 
 /** One slide. `src` is withheld until it is visible — that is the lazy part. */
 function CarouselSlide({ video, active, playing }) {
@@ -75,8 +59,13 @@ function CarouselSlide({ video, active, playing }) {
   }, [active, playing])
 
   return (
-    <div className="carousel-item px-2 md:px-3">
-      <div className="group relative aspect-[2/1] w-full overflow-hidden border border-white/10 bg-gradient-to-br from-ink2 to-ink3 transition-colors duration-300 hover:border-brandLine">
+    /* No horizontal gutter: with one slide per view the padding would only
+       shave width off the clip, and this slide is meant to read as the
+       module's main visual. */
+    <div className="carousel-item">
+      {/* 16:9 + object-contain → the clip keeps its own proportions; the
+          frame never crops or stretches it to fill. */}
+      <div className="group relative aspect-video w-full overflow-hidden border border-white/10 bg-gradient-to-br from-ink2 to-ink3 transition-colors duration-300 hover:border-brandLine">
         <video
           ref={videoRef}
           /* undefined until visible → nothing is downloaded for hidden slides */
@@ -124,7 +113,6 @@ export default function VideoCarousel({ videos }) {
   /* Two copies back-to-back: the second one is what makes the loop seamless. */
   const looped = useMemo(() => [...videos, ...videos], [videos])
 
-  const perView = usePerView()
   const [slot, setSlot] = useState(0)
   const [anim, setAnim] = useState(true)
   const [inView, setInView] = useState(false)
@@ -201,6 +189,19 @@ export default function VideoCarousel({ videos }) {
     setSlot(i)
   }
 
+  /* Keyboard — left/right arrows page the carousel, but only while it is
+     actually on screen so the keys never fight another section. `slot` is a
+     dependency because next/prev read it when they run. */
+  useEffect(() => {
+    if (!inView) return
+    const onKey = (e) => {
+      if (e.key === 'ArrowLeft') prev()
+      else if (e.key === 'ArrowRight') next()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [inView, slot])
+
   /* Touch swipe — horizontal only, vertical scrolling stays with the page. */
   const touchStart = useRef(0)
   const onTouchStart = (e) => {
@@ -222,7 +223,7 @@ export default function VideoCarousel({ videos }) {
    * clone nodes pick the files up again; they are already in the browser
    * cache by then, so it costs nothing.
    */
-  const isActive = (position) => position >= slot && position < slot + perView
+  const isActive = (position) => position >= slot && position < slot + PER_VIEW
 
   return (
     <div>

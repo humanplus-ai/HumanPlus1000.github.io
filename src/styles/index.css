@@ -110,4 +110,64 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* ------------------------------------------------------------------
+     Video carousel (03 in MULTIMODAL DATA)
+     `--per-view` is the single source for "how many slides fit": the slide
+     width and the slide offset are both derived from it, so the breakpoints
+     can never drift apart. `--slot` is set inline by VideoCarousel.
+     ------------------------------------------------------------------ */
+  .carousel-track {
+    --per-view: 1;
+    --slot: 0;
+    display: flex;
+    align-items: stretch;
+    transform: translateX(calc(-1 * var(--slot) * (100% / var(--per-view))));
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Set for one frame while the loop snaps back — no visible slide back. */
+  .carousel-track.no-anim {
+    transition: none;
+  }
+  .carousel-item {
+    flex: 0 0 calc(100% / var(--per-view));
+    min-width: 0;
+  }
+  @media (min-width: 768px) {
+    .carousel-track {
+      --per-view: 2;
+    }
+  }
+  @media (min-width: 1024px) {
+    .carousel-track {
+      --per-view: 3;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Products band — a whisper of dark grey behind the product shot.
+     Vision-0 is a black ring, so on pure #0a0a0a its silhouette vanishes.
+     This lifts the ground a few shades (#22252B → #1C1F24) and fades out
+     completely, so it reads as light falling on the product, not a panel.
+     ------------------------------------------------------------------ */
+  .product-halo {
+    /* A flat dark-grey field under the product, fading to nothing before it
+       reaches the frame.
+       ⚠️ The two percentages are RADII, not diameters — `78%` means a radius
+       of 0.78 × width, i.e. wider than the frame's half-width (50%). Push
+       them past 50% and the gradient is still ~solid when the element ends,
+       which paints a hard-edged grey RECTANGLE behind the product. Keeping
+       them under 50% (46% / 44%) is what makes the falloff finish inside the
+       box, so it reads as light, not as a panel.
+       Stops stay near-black greys (#22252B → #1C1F24) so the black Vision-0
+       ring has a ground to read against without any glow. */
+    background: radial-gradient(
+      ellipse 50% 50% at 50% 50%,
+      rgba(34, 37, 43, 1) 0%,
+      rgba(32, 35, 41, 0.92) 45%,
+      rgba(28, 31, 36, 0.6) 72%,
+      rgba(20, 22, 26, 0.18) 90%,
+      rgba(10, 10, 10, 0) 100%
+    );
+  }
 }

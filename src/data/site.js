@@ -25,9 +25,18 @@ export const site = {
 }
 
 export const nav = {
+  /**
+   * Two link kinds:
+   *   { href: '#dataset' }        → home page, scrolls to that section
+   *   { href: '#/products', page } → the Products sub-page (see useHashRoute)
+   *
+   * Labels keep the existing title case so the bar reads as one set.
+   */
   links: [
     { label: 'Overview', href: '#overview' },
     { label: 'Dataset', href: '#dataset' },
+    { label: 'Products', href: '#/products', page: 'products' },
+    { label: 'Research', href: '#research' },
     { label: 'Download', href: '#download' },
   ],
 }
@@ -165,48 +174,10 @@ export const demo = {
    */
   videoSrc: 'videos/demo/HeroV5.mp4',
 
-  /**
-   * Four sample clips rendered in a 2 × 2 grid directly under the main reel.
-   *
-   * Unlike the main reel these are NOT autoplayed — a 2 × 2 grid decoding
-   * four streams at once is wasteful, so each clip only loads once it is
-   * scrolled near the viewport and then waits for a click to play/pause.
-   *
-   * Replace a clip by overwriting the file in `public/videos/demo/samples/`
-   * (keep the name) or by changing the two paths below. Both are relative
-   * (no leading "/") so they resolve under a GitHub Pages sub-path.
-   *
-   * - index      — ordinal drawn in the brand colour above the caption
-   * - title      — English caption, keep it short (one line)
-   * - videoSrc   — MP4, muted + inline, click to play/pause
-   * - posterSrc  — still frame shown until the first frame decodes
-   */
-  samples: [
-    {
-      index: '01',
-      title: 'Egocentric Vision',
-      videoSrc: 'videos/demo/samples/sample-01.mp4',
-      posterSrc: 'videos/demo/samples/sample-01.jpg',
-    },
-    {
-      index: '02',
-      title: 'Whole-Body Motion',
-      videoSrc: 'videos/demo/samples/sample-02.mp4',
-      posterSrc: 'videos/demo/samples/sample-02.jpg',
-    },
-    {
-      index: '03',
-      title: 'Hand-Object Interaction',
-      videoSrc: 'videos/demo/samples/sample-03.mp4',
-      posterSrc: 'videos/demo/samples/sample-03.jpg',
-    },
-    {
-      index: '04',
-      title: 'Long-Horizon Activity',
-      videoSrc: 'videos/demo/samples/sample-04.mp4',
-      posterSrc: 'videos/demo/samples/sample-04.jpg',
-    },
-  ],
+  /* The 2 × 2 sample grid that used to sit under the main reel was removed:
+     the module is now just the reel (label → title → description → video).
+     Leftover assets still live in public/videos/demo/samples/ until they are
+     cleaned up, but nothing references them any more. */
 }
 
 /* ------------------------------------------------------------------ */
@@ -296,6 +267,42 @@ export const multimodal = {
       videoSrc: 'videos/multimodal/Motion.mp4',
     },
   ],
+
+  /**
+   * 03 — the visualization carousel, rendered below the two modality columns.
+   *
+   * Nine clips, one horizontal carousel (not a 3 × 3 grid): 3 visible on
+   * desktop, 2 on tablet, 1 on mobile. See ui/VideoCarousel.jsx.
+   *
+   * - src     — MP4, relative (no leading "/") so it resolves under a
+   *             GitHub Pages sub-path
+   * - poster  — still frame grabbed from the clip at ~1.5s, so a slide shows
+   *             real content before its video is allowed to download
+   *
+   * ⚠️ Source files were COPIED (not moved) from 图片素材\demo\sample1..9.mp4
+   *    into public/videos/visualizations/ and renamed sample-01..09.mp4, so
+   *    the folder order matches the carousel order. The originals are
+   *    untouched. sample-01 and sample-03 are 42MB / 35MB — see the note in
+   *    MEMORY.md about pushing large media to GitHub.
+   */
+  visualizations: {
+    /* Ordinal heading. `title` is intentionally null — the block reads as a
+       bare "03" above the carousel; set a string to add " / <title>". */
+    index: '03',
+    title: null,
+
+    videos: [
+      { id: 1, src: 'videos/visualizations/sample-01.mp4', poster: 'images/visualizations/sample-01.jpg' },
+      { id: 2, src: 'videos/visualizations/sample-02.mp4', poster: 'images/visualizations/sample-02.jpg' },
+      { id: 3, src: 'videos/visualizations/sample-03.mp4', poster: 'images/visualizations/sample-03.jpg' },
+      { id: 4, src: 'videos/visualizations/sample-04.mp4', poster: 'images/visualizations/sample-04.jpg' },
+      { id: 5, src: 'videos/visualizations/sample-05.mp4', poster: 'images/visualizations/sample-05.jpg' },
+      { id: 6, src: 'videos/visualizations/sample-06.mp4', poster: 'images/visualizations/sample-06.jpg' },
+      { id: 7, src: 'videos/visualizations/sample-07.mp4', poster: 'images/visualizations/sample-07.jpg' },
+      { id: 8, src: 'videos/visualizations/sample-08.mp4', poster: 'images/visualizations/sample-08.jpg' },
+      { id: 9, src: 'videos/visualizations/sample-09.mp4', poster: 'images/visualizations/sample-09.jpg' },
+    ],
+  },
 }
 
 /* ------------------------------------------------------------------ */
@@ -376,5 +383,159 @@ export const representativeTasks = {
     { index: '05', title: 'HANDLING TRAYS', videoSrc: 'videos/tasks/05.mp4' },
     /* 06 stays a placeholder until its clip exists */
     { index: '06', title: 'WORKPIECE PROCESSING', videoSrc: 'videos/tasks/06.mp4' },
+  ],
+}
+
+/* ------------------------------------------------------------------ */
+/* Research                                                            */
+/* Page order: rendered between Activities (04) and Download (05)      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * English only.
+ *
+ * Titles, venues, years and URLs below are transcribed verbatim from the
+ * project brief — do not paraphrase a title or invent an author list.
+ * Adding a fourth paper means pushing one more object onto `papers`; the
+ * layout (3 columns desktop / 2 tablet / 1 mobile) is rendered from the
+ * array length, so nothing else needs to change.
+ *
+ * Every link opens in a new tab; the component applies
+ * `target="_blank"` + `rel="noopener noreferrer"`.
+ *
+ * Shape of one paper:
+ *   index       — ordinal drawn large and low-contrast above the title
+ *   title       — full paper title, never abbreviated
+ *   year        — e.g. '2026'
+ *   venue       — e.g. 'ACM Transactions on Graphics'
+ *   venueNote   — parenthetical conference, e.g. '(SIGGRAPH Asia)'; '' drops it
+ *   awards      — optional accent label lines, e.g. ['BEST PAPER AWARD',
+ *                 'SIGGRAPH 2025']; [] drops the label entirely
+ *   description — one paragraph, used as-is
+ *   links       — [{ label, url }] rendered as uppercase mono links
+ */
+export const research = {
+  /* Main title of the module */
+  title: 'RESEARCH',
+
+  /* One-line description under the title */
+  description:
+    'Research on wearable sensing, inertial motion capture, and human motion understanding.',
+
+  papers: [
+    {
+      index: '01',
+      title:
+        'CLOTHO: Canonicalizing IMUs from Loose Inertial Garments for Accurate Human Motion Tracking',
+      year: '2026',
+      venue: 'ACM Transactions on Graphics',
+      venueNote: '(SIGGRAPH Asia)',
+      awards: [],
+      description:
+        'We introduce CLOTHO, an IMU canonicalization framework for garment-based inertial motion capture, achieving state-of-the-art accuracy, zero-shot generalization to unseen garments, and robust long-term tracking.',
+      links: [{ label: 'Project', url: 'https://clotho-mocap.github.io/' }],
+    },
+    {
+      index: '02',
+      title:
+        'Transformer IMU Calibrator: Dynamic On-body IMU Calibration for Inertial Motion Capture',
+      year: '2025',
+      venue: 'ACM Transactions on Graphics',
+      venueNote: '(SIGGRAPH)',
+      awards: ['Best Paper Award', 'SIGGRAPH 2025'],
+      description:
+        'We propose a novel dynamic calibration method for sparse inertial motion capture systems, which is the first to break the restrictive absolute static assumption in IMU calibration, the first to achieve implicit IMU calibration, as well as the first to enable long-term and accurate motion capture using sparse IMUs.',
+      links: [
+        { label: 'Project', url: 'https://www.humanplus.xyz/siggraph-2025-zcx' },
+        { label: 'Paper', url: 'https://arxiv.org/pdf/2506.10580v1' },
+        { label: 'Github', url: 'https://github.com/ZuoCX1996/TIC' },
+      ],
+    },
+    {
+      index: '03',
+      title: 'Loose Inertial Poser: Motion Capture with IMU-attached Loose-Wear Jacket',
+      year: '2024',
+      venue: 'CVPR',
+      venueNote: '',
+      awards: [],
+      description:
+        'We introduce Loose Inertial Poser, a novel motion capture solution with high wearing comfortableness, by integrating four Inertial Measurement Units (IMUs) into a loose-wear jacket.',
+      links: [
+        { label: 'Project', url: 'https://www.humanplus.xyz/cvpr2024-zcx' },
+        { label: 'Paper', url: 'https://ieeexplore.ieee.org/document/10657915' },
+        { label: 'Github', url: 'https://github.com/ZuoCX1996/Loose-Inertial-Poser' },
+      ],
+    },
+  ],
+}
+
+/* ------------------------------------------------------------------ */
+/* Products page                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Standalone /#/products page — two alternating image + info bands.
+ *
+ * English only: name, slogan and feature chips are all English, matching the
+ * rest of the site. (Glove-0 was cut — product line is Motion-0 + Vision-0.)
+ *
+ * Assets live in public/images/products/ as transparent PNGs: the original
+ * studio shots (light grey/white backdrops) were keyed out so the products
+ * sit directly on the #0a0a0a page. Raw originals stay untouched in
+ * 图片素材\Products.
+ *
+ *   `imageSrc` — relative path, e.g. 'images/products/motion-0.png'
+ *   `videoSrc` — same idea for an MP4; wins over imageSrc when both are set
+ *   neither    → the reserved box renders `placeholderLabel`
+ *
+ * ⚠️ The source folder's file numbers do NOT match the product order:
+ *    01.png = the garment (Motion-0), 03.jpg = the head ring (Vision-0).
+ *    Mapping below is by image content, not by file name.
+ *
+ * Once a real asset is set the frame styling disappears entirely (no border,
+ * no fill) so the product shot blends straight into the page background.
+ *
+ * `halo: true` puts a very faint dark-grey radial behind the shot. Vision-0
+ * is a black ring on a near-black page, so without it the silhouette
+ * disappears — the halo lifts the ground just enough to read the outline
+ * without becoming a visible panel.
+ *
+ * Copy shape is identical for both: ordinal → name → slogan → feature chips.
+ * `features: []` would drop the chip row.
+ *
+ * `reverse: true` puts the visual on the right (and text on the left) on
+ * desktop; on mobile every band falls back to image-above-text.
+ */
+export const products = {
+  /* Hero */
+  label: 'PRODUCTS',
+  title: 'HumanPlus Capture System',
+  description: 'Wearable interfaces for capturing human behavior in the real world.',
+
+  items: [
+    {
+      index: '01',
+      name: 'Motion-0',
+      slogan: 'Full-Body Sensing, Effortless Capture',
+      features: ['Comfortable Fit', '10H+ Battery', 'Washable'],
+      /* Motion capture garment */
+      imageSrc: 'images/products/motion-0.png',
+      videoSrc: null,
+      placeholderLabel: 'PRODUCT IMAGE',
+      halo: true,
+      reverse: false,
+    },
+    {
+      index: '02',
+      name: 'Vision-0',
+      slogan: 'First-Person Vision, Real-World Perception',
+      features: ['Binocular Vision', 'Lightweight Design', 'Real-Time Capture'],
+      /* Head-mounted dual-camera ring */
+      imageSrc: 'images/products/vision-0.png',
+      videoSrc: null,
+      placeholderLabel: 'PRODUCT IMAGE',
+      halo: true,
+      reverse: true,
+    },
   ],
 }

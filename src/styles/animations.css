@@ -146,3 +146,39 @@
 .marquee {
   animation: marquee 30s linear infinite;
 }
+
+/* ------------------------------------------------------------------
+   Products band divider — a very restrained dark-grey sheen.
+   The track is 2× the strip wide and its gradient is mirrored around the
+   centre, so sliding it by half its own width loops seamlessly: the frame
+   the animation ends on is identical to the one it starts on.
+   Three shades only (#16181C → #1C1F24 → #22252B), 26s for one pass —
+   slow enough to read as material, not as motion.
+   ------------------------------------------------------------------ */
+@keyframes sheen-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.sheen-track {
+  animation: sheen-slide 26s linear infinite;
+}
+.sheen-gradient {
+  background: linear-gradient(
+    90deg,
+    #16181c 0%,
+    #1c1f24 25%,
+    #22252b 50%,
+    #1c1f24 75%,
+    #16181c 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheen-track {
+    animation: none;
+  }
+}

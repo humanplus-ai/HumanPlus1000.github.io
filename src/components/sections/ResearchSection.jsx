@@ -1,0 +1,172 @@
+import { research } from '../../data/site'
+import Reveal from '../ui/Reveal'
+
+/* ------------------------------------------------------------------ */
+/* Paper link — uppercase mono + arrow that nudges right on hover      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * One external link of a paper block.
+ *
+ * Deliberately not an `<a>` with a blue underline: on this page links are
+ * small mono labels in upper case whose only hover feedback is a colour
+ * shift to the brand blue and a 4px arrow slide. No underline, ever —
+ * it is what keeps the module reading like a spec sheet rather than a
+ * bibliography.
+ */
+function PaperLink({ link }) {
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group/link inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.25em] text-white/60 transition-colors duration-300 hover:text-brand"
+    >
+      <span>{link.label}</span>
+      <span
+        className="transition-transform duration-300 group-hover/link:translate-x-1"
+        aria-hidden="true"
+      >
+        →
+      </span>
+    </a>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* One paper — ordinal, title, venue stack, description, links         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * `h-full` + `flex-col` + `mt-auto` on the links is what makes three
+ * blocks of unequal text length share one bottom edge: the grid stretches
+ * every cell to the row height, then flex pushes the link row down.
+ *
+ * The whole block is a `group`, but its only hover feedback is the ordinal
+ * lifting from 25% to 45% brand blue — no fill, no border, no lift. Cards
+ * are what this module is deliberately not.
+ */
+function Paper({ paper }) {
+  return (
+    <article className="group flex h-full flex-col">
+      {/* Ordinal — large, low-contrast brand blue. It is a numeral, which is
+          one of the few places this page spends the brand colour. */}
+      <div className="text-[clamp(2.5rem,4vw,3.5rem)] font-black leading-none tracking-tight text-brand/25 transition-colors duration-300 group-hover:text-brand/45">
+        {paper.index}
+      </div>
+
+      {/* Accent label — only rendered when a paper carries an award */}
+      {paper.awards.length > 0 && (
+        <div className="mt-6 inline-flex w-fit flex-col border border-brandLine bg-brandSoft px-3 py-2">
+          {paper.awards.map((line) => (
+            <span
+              key={line}
+              className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand"
+            >
+              {line}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Full paper title — never abbreviated, wraps naturally */}
+      <h3 className="mt-6 text-lg font-semibold leading-snug text-white md:text-xl">
+        {paper.title}
+      </h3>
+
+      {/* Year / venue / conference — mono stack so each part can be read
+          separately without inventing punctuation in the data. */}
+      <div className="mt-5 space-y-1">
+        <p className="text-xs font-mono tracking-[0.15em] text-white/80">
+          {paper.year} · {paper.venue}
+        </p>
+        {paper.venueNote && (
+          <p className="text-xs font-mono tracking-[0.15em] text-mute">{paper.venueNote}</p>
+        )}
+      </div>
+
+      <p className="mt-6 text-sm leading-relaxed text-white/55">{paper.description}</p>
+
+      {/* Links sit at the bottom so unequal blocks still line up */}
+      <div className="mt-auto flex flex-wrap gap-x-8 gap-y-3 pt-10">
+        {paper.links.map((link) => (
+          <PaperLink key={link.url} link={link} />
+        ))}
+      </div>
+    </article>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Research                                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * English only. Three papers side by side on desktop, separated by
+ * hairlines rather than cards.
+ *
+ * Column logic:
+ *   1 col  → mobile, blocks stacked with a hairline between them
+ *   2 cols → tablet, blocks are too narrow to hold a full title in
+ *            threes, so the third wraps
+ *   3 cols → desktop, with `lg:border-l` hairlines drawn between the
+ *            columns (drawn per column instead of `divide-x` so the
+ *            wrapping tablet rows never show a stray line)
+ */
+export default function ResearchSection() {
+  const { papers } = research
+  const last = papers.length - 1
+
+  return (
+    <section className="relative py-32 md:py-40">
+      {/* id="research" — the nav "Research" link points at #research.
+          Anchor is on the content wrapper so the section's invisible top
+          padding does not push the heading below the fold. (Same reason
+          DownloadSection anchors its inner wrapper.) */}
+      <div id="research" className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10">
+        {/* Main title */}
+        <Reveal
+          as="h2"
+          className="font-black tracking-tight leading-[1.2] text-[clamp(1.25rem,4vw,3rem)]"
+        >
+          {research.title}
+        </Reveal>
+
+        {/* Description */}
+        <Reveal delay={1} className="mt-6">
+          <p className="max-w-xl text-base text-white/70">{research.description}</p>
+        </Reveal>
+
+        {/* Papers — 3 across on desktop, 2 on tablet, stacked on mobile */}
+        <div className="mt-20 grid grid-cols-1 gap-y-14 md:grid-cols-2 md:gap-x-10 md:gap-y-16 lg:grid-cols-3 lg:gap-x-0 lg:gap-y-0">
+          {papers.map((paper, i) => (
+            <Reveal
+              key={paper.index}
+              delay={i + 1}
+              className={[
+                /* Mobile rule above every block but the first; it disappears
+                   at `md` for whatever shares MD's first row (index 0–1) so
+                   the two tablet columns line up at the top, and at `lg` for
+                   everything, because there the column hairlines take over. */
+                i === 0
+                  ? ''
+                  : i < 2
+                    ? 'border-t border-white/10 pt-12 md:border-t-0 md:pt-0'
+                    : 'border-t border-white/10 pt-12 lg:border-t-0 lg:pt-0',
+                /* Horizontal breathing room only exists on the desktop row,
+                   where the hairline actually runs between the columns. */
+                i === 0 ? 'lg:pr-8' : '',
+                i === last ? 'lg:border-l lg:border-white/10 lg:pl-8' : '',
+                i > 0 && i < last ? 'lg:border-l lg:border-white/10 lg:pl-8 lg:pr-8' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              <Paper paper={paper} />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

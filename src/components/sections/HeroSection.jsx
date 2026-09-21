@@ -105,9 +105,7 @@ export default function HeroSection() {
           delay={2}
           className={`text-center mt-8 text-base md:text-xl text-white/80 max-w-6xl mx-auto leading-relaxed font-normal whitespace-nowrap ${COPY_SHADOW}`}
         >
-          {hero.subtitle[0]}
-          <br />
-          {hero.subtitle[1]}
+          <span className="block">{hero.subtitle[0]}</span><span className="block mt-3">{hero.subtitle[1]}</span>
         </Reveal>
 
         {/* Stats card — frosted silver panel floating over the cover image.

@@ -52,7 +52,7 @@ function ImageFrame({ src, videoSrc, label }) {
   }
 
   return (
-    <div className="group relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 hover:border-brandLine">
+    <div className="group relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden rounded-[16px] transition-colors duration-300 hover:border-brandLine">
       {videoSrc ? (
         <video
           ref={videoRef}
@@ -114,24 +114,25 @@ export default function OverviewSection() {
   return (
     <section className="relative py-[85px] md:py-[107px]">
       <div id="overview" className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10">
-        <div className="grid gap-12 lg:gap-16 items-center md:grid-cols-2 lg:grid-cols-[1.15fr_1fr]">
-          {/* Left — copy */}
+        {/* Module label + title live ABOVE the glass panel — no glass
+            background on them, original type treatment kept. */}
+        <Reveal className="text-xs font-mono text-mute uppercase tracking-[0.3em]">
+          {overview.label}
+        </Reveal>
+        <Reveal
+          as="h2"
+          delay={1}
+          className="mt-4 font-black tracking-tight leading-[1.2] text-[clamp(1.25rem,4vw,3rem)]"
+        >
+          {overview.title}
+        </Reveal>
+
+        {/* The shared frosted-glass panel wraps ONLY the copy body + media.
+            `items-center` keeps the two halves vertically centred together. */}
+        <div className="glass-card mt-8 grid gap-12 lg:gap-16 items-center md:grid-cols-2 lg:grid-cols-[1.15fr_1fr]">
+          {/* Left — copy body */}
           <div>
-            <Reveal className="text-xs font-mono text-mute uppercase tracking-[0.3em]">
-              {overview.label}
-            </Reveal>
-
-            {/* Title — same H2 scale as the DEMO section title */}
-            <Reveal
-              as="h2"
-              delay={1}
-              className="mt-4 font-black tracking-tight leading-[1.2] text-[clamp(1.25rem,4vw,3rem)]"
-            >
-              {overview.title}
-            </Reveal>
-
-            {/* Body — max width keeps the reading rhythm comfortable */}
-            <Reveal delay={2} className="mt-8 space-y-6 max-w-xl">
+            <Reveal delay={2} className="space-y-6 max-w-xl">
               {overview.body.map((text, i) => (
                 <Paragraph key={i}>{text}</Paragraph>
               ))}

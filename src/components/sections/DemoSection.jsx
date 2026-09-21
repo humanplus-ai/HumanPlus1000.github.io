@@ -16,7 +16,7 @@ import Reveal from '../ui/Reveal'
  * is gone, so this shell now has exactly one user.)
  */
 const FRAME_CLASS =
-  'relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden select-none'
+  'relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden rounded-[16px] select-none'
 
 /**
  * Autoplaying demo clip.
@@ -152,8 +152,14 @@ export default function DemoSection() {
             Autoplays (muted, looped, no controls) when scrolled into view.
             The 2 × 2 sample grid that used to follow it was removed: this
             module is now label → title → description → reel, nothing else. */}
+        {/* Reel wrapped in the shared frosted-glass card — only the video sits
+            inside it; the module label/title stay above, outside the glass.
+            `.glass-card` (24px padding) keeps the video off the glass edge, and
+            the frame's own 16px radius makes it read as one unit. */}
         <Reveal delay={3} className="mt-16 md:mt-20">
-          <VideoFrame src={demo.videoSrc} label={demo.placeholderLabel} poster={demo.posterSrc} />
+          <div className="glass-card">
+            <VideoFrame src={demo.videoSrc} label={demo.placeholderLabel} poster={demo.posterSrc} />
+          </div>
         </Reveal>
       </div>
     </section>

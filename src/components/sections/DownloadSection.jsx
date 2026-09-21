@@ -37,9 +37,10 @@ export default function DownloadSection() {
           {download.title}
         </Reveal>
 
-        {/* Wide panel — thin hairline border, no fill, generous whitespace */}
+        {/* Wide panel — SAME frosted glass skin as RESEARCH / DATASET cards.
+            Static (no `glass-card--lift`): the panel carries no hover. */}
         <Reveal delay={2} className="mt-16">
-          <div className="flex flex-col gap-10 border border-white/10 px-8 py-12 md:flex-row md:items-center md:justify-between md:px-16 md:py-20">
+          <div className="glass-card flex flex-col gap-10 px-8 py-12 md:flex-row md:items-center md:justify-between md:px-16 md:py-20">
             {/* Left: content */}
             <div className="max-w-4xl">
               <h3 className="text-xs font-mono uppercase tracking-[0.3em] text-white">
@@ -52,19 +53,16 @@ export default function DownloadSection() {
               </p>
             </div>
 
-            {/* Right: CTA — opens in a new tab.
-                Black/white by default; the brand colour appears on hover only,
-                so the page never shows a large blue button. */}
+            {/* Right: CTA — blue glass capsule, reusing RESEARCH's
+                `.research-more-glass` skin. Opens in a new tab. */}
             <a
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex shrink-0 items-center gap-2 text-sm font-mono uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-brand"
+              className="group/cta research-more-glass inline-flex shrink-0 items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white"
             >
-              <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-brand/60">
-                {panel.cta.label}
-              </span>
-              <span className="transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1">
+              <span>{panel.cta.label}</span>
+              <span className="transition-transform duration-300 ease-out group-hover/cta:translate-x-[3px]">
                 ↗
               </span>
             </a>

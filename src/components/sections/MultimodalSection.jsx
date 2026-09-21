@@ -49,7 +49,7 @@ function ModalityVideo({ src, label }) {
   }, [])
 
   return (
-    <div className="relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 group-hover:border-brandLine">
+    <div className="relative aspect-video w-full overflow-hidden rounded-[8px]">
       {src ? (
         <video
           ref={videoRef}
@@ -62,17 +62,11 @@ function ModalityVideo({ src, label }) {
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-mute transition-colors duration-300 group-hover:text-brand/70">
+          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-mute">
             {label}
           </span>
         </div>
       )}
-
-      {/* Brand hover wash — a flat 5% tint, no gradient and no glow */}
-      <span
-        className="pointer-events-none absolute inset-0 bg-brandSoft opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden="true"
-      />
     </div>
   )
 }
@@ -84,24 +78,27 @@ function ModalityVideo({ src, label }) {
  */
 function ModalityColumn({ card, placeholderLabel }) {
   return (
-    /* `group` scopes the hover tint to this column only */
-    <div className="group flex flex-col">
-      {/* Ordinal + English name — the column heading.
-          Only the ordinal number carries the brand colour; the title stays white. */}
-      <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-white">
-        <span className="text-brand">{card.index}</span> / {card.title}
+    /* Shared glass skin, static (no `glass-card--lift`) — matches ACTIVITIES.
+       The original blue hover wash is removed with the video frame below. */
+    <div className="glass-card flex h-full flex-col">
+      {/* Title — left-aligned, NO ordinal, a small section-level heading
+          (not a giant numeral). Same size/weight for both cards. */}
+      <h3 className="text-[17px] font-semibold leading-tight tracking-tight text-white/90">
+        {card.title}
       </h3>
 
-      {/* Video */}
-      <div className="mt-8">
+      {/* Description — under the title, above the video. Soft light grey,
+          comfortable line-height. */}
+      <p className="mt-2.5 text-[14px] leading-[1.6] font-normal text-white/55">{card.desc}</p>
+
+      {/* Tags / category metadata — a lightweight label, no capsule, no border,
+          no blue. A touch smaller, wider tracking, low-saturation grey. */}
+      <p className="mt-2 text-[11px] font-mono tracking-[0.15em] text-white/40">{card.tags}</p>
+
+      {/* Video — the visual anchor, below all the text. */}
+      <div className="mt-4">
         <ModalityVideo src={card.videoSrc} label={placeholderLabel} />
       </div>
-
-      {/* Description */}
-      <p className="mt-6 text-sm leading-relaxed text-white/60">{card.desc}</p>
-
-      {/* Tags */}
-      <p className="mt-6 text-[10px] font-mono uppercase tracking-widest text-mute">{card.tags}</p>
     </div>
   )
 }

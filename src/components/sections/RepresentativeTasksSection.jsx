@@ -49,7 +49,7 @@ function TaskVideo({ src, label }) {
   }, [])
 
   return (
-    <div className="relative aspect-video w-full bg-gradient-to-br from-ink2 to-ink3 border border-white/10 overflow-hidden transition-colors duration-300 group-hover:border-brandLine">
+    <div className="relative aspect-video w-full overflow-hidden rounded-[8px]">
       {src ? (
         <video
           ref={videoRef}
@@ -62,22 +62,16 @@ function TaskVideo({ src, label }) {
         />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <span className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center text-white/60 transition-colors duration-300 group-hover:border-brandLine group-hover:text-brand">
+          <span className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center text-white/60">
             <svg viewBox="0 0 24 24" className="w-5 h-5 translate-x-[1px]" aria-hidden="true">
               <path d="M8 5v14l11-7z" fill="currentColor" />
             </svg>
           </span>
-          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-mute transition-colors duration-300 group-hover:text-brand/70">
+          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-mute">
             {label}
           </span>
         </div>
       )}
-
-      {/* Brand hover wash — a flat 5% tint, no gradient and no glow */}
-      <span
-        className="pointer-events-none absolute inset-0 bg-brandSoft opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden="true"
-      />
     </div>
   )
 }
@@ -88,18 +82,12 @@ function TaskVideo({ src, label }) {
 
 function TaskCell({ task, placeholderLabel }) {
   return (
-    /* `group` scopes the hover tint to this cell only */
-    <div className="group flex flex-col">
-      {/* Ordinal + English task name — the cell heading.
-          Only the ordinal number carries the brand colour. */}
-      <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-white">
-        <span className="text-brand">{task.index}</span>
-      </h3>
-
+    /* Same shared glass skin as RESEARCH, but WITHOUT `glass-card--lift`:
+       the video cards stay completely static — no hover tint, no lift.
+       The 01–06 ordinal has been removed per request. */
+    <div className="glass-card flex h-full flex-col">
       {/* Video — the main visual element of the cell */}
-      <div className="mt-6">
-        <TaskVideo src={task.videoSrc} label={placeholderLabel} />
-      </div>
+      <TaskVideo src={task.videoSrc} label={placeholderLabel} />
     </div>
   )
 }

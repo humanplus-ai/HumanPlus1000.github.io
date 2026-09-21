@@ -52,11 +52,11 @@ function MoreButton({ link }) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group/more inline-flex shrink-0 items-center gap-2 rounded-full bg-brand pl-6 pr-5 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-[#6cabfb] focus:outline-none focus-visible:ring-1 focus-visible:ring-brandLine"
+      className="group/more research-more-glass inline-flex shrink-0 items-center gap-2 rounded-full pl-6 pr-5 py-2.5 text-sm font-semibold text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-brandLine"
     >
       <span>{link.label}</span>
       <span
-        className="transition-transform duration-300 group-hover/more:translate-x-1"
+        className="transition-transform duration-300 group-hover/more:translate-x-[3px]"
         aria-hidden="true"
       >
         →
@@ -87,13 +87,13 @@ function MoreButton({ link }) {
  */
 function Paper({ paper }) {
   return (
-    <article className="group flex h-full flex-col">
+    <article className="group glass-card glass-card--lift flex h-full flex-col">
       {/* Meta row — fixed structure on every paper: number left, optional
           award right, nothing else. */}
       <div className="flex items-start justify-between gap-6">
         {/* Ordinal — large, low-contrast brand blue. It is a numeral, which
             is one of the few places this page spends the brand colour. */}
-        <div className="text-[clamp(2.5rem,4vw,3.5rem)] font-black leading-none tracking-tight text-brand/25 transition-colors duration-300 group-hover:text-brand/45">
+        <div className="text-[clamp(2.5rem,4vw,3.5rem)] font-black leading-none tracking-tight text-brand">
           {paper.index}
         </div>
 

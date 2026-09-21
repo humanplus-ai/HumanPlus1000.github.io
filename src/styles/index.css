@@ -232,3 +232,129 @@
     );
   }
 }
+
+/* ============================================================
+   [TEST] Glass card — SHARED reversible visual layer
+   ------------------------------------------------------------
+   ONE source of truth for the site's premium frosted-glass skin.
+   Used by RESEARCH (01/02/03) AND ACTIVITIES (Representative Tasks
+   01–06). `glass-card` = the static glass; `glass-card--lift` = the
+   SAME glass WITH hover response (clarity + soft elevation), applied
+   only where a hover state is wanted (RESEARCH). ACTIVITIES video
+   cards use `glass-card` alone → no hover feedback at all.
+   To revert the whole experiment: delete this block and remove the
+   classes from ResearchSection.jsx + RepresentativeTasksSection.jsx.
+   ============================================================ */
+.glass-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 24px;
+  /* Dark translucent BODY — gives the glass real mass against the near-black
+     page, but ~54% of the environment still reads through it. Kept as
+     `background-color` (not in the image stack) so any hover fade animates
+     smoothly without re-animating the gradients. */
+  background-color: rgba(16, 18, 24, 0.46);
+  /* Surface sheen, painted UNDER the content: a soft top-left bloom + a
+     135° light→dark wash so the pane is lit from the upper-left instead of
+     reading as a flat rectangle. */
+  background-image:
+    radial-gradient(120% 110% at 18% 6%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 22%, transparent 46%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(255, 255, 255, 0.015) 100%);
+  /* Stronger frosting — softens detail, diffuses light, lifts saturation a
+     touch, but the environment is still felt. */
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  /* Directional VOLUME: top/left catch the light, bottom/right fall into
+     shadow — this bevel is what makes the edge feel cut, not painted. Plus a
+     low, soft lift so the pane floats without a heavy web drop-shadow. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset -1px 0 0 rgba(0, 0, 0, 0.10),
+    0 22px 48px -28px rgba(0, 0, 0, 0.85);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s ease,
+    background-color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+/* Crisp cut-glass edge — a single 1px ring, slightly brighter than the fill
+   so the rim reads as a real edge, not a drawn rectangle. */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+/* Hover response — only on cards that opt in via `glass-card--lift`
+   (RESEARCH). ACTIVITIES deliberately omits this class, so its video
+   cards stay perfectly static under the cursor. */
+.glass-card--lift:hover {
+  /* Slightly CLEARER — the body fades a hair so more of the environment
+     shows through. Smooth because it is `background-color`. */
+  background-color: rgba(18, 20, 27, 0.40);
+  border-color: rgba(255, 255, 255, 0.20);
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.24),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06),
+    inset -1px 0 0 rgba(0, 0, 0, 0.12),
+    0 30px 60px -30px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(88, 155, 249, 0.05);
+}
+
+/* ============================================================
+   [TEST] RESEARCH "More" button — blue glass capsule
+   ------------------------------------------------------------
+   A THIN, translucent BLUE glass pill (NOT the old solid `bg-brand`
+   button). Uses the same material language as the shared glass skin
+   (blur + saturation + sheen + cut edge + directional inner shadow) but
+   tinted with the brand blue #589BF9 and kept visibly blue.
+   Scoped to this one button ONLY via `.research-more-glass` so no other
+   button / global style is touched. To revert: delete this block and drop
+   the class from MoreButton in ResearchSection.jsx.
+   ============================================================ */
+.research-more-glass {
+  position: relative;
+  /* Clearly BLUE body — high alpha so the brand colour reads, but still
+     translucent so it reads as glass, not paint. `background-color` (not in
+     the image stack) so any hover fade animates smoothly. */
+  background-color: rgba(88, 155, 249, 0.55);
+  /* Surface light INSIDE the glass: a top-left white bloom + a 135° wash
+     that falls to a hair of shadow at the bottom-right — this is what makes
+     it read as lit glass rather than a flat blue bar. Painted under the text. */
+  background-image:
+    radial-gradient(115% 130% at 22% 0%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.07) 30%, transparent 56%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(88, 155, 249, 0) 46%, rgba(0, 0, 0, 0.10) 100%);
+  /* Frosting — softens whatever sits behind the pill. */
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  /* Glass rim: a faint white edge ring (brighter than the blue fill) so the
+     pill reads as a real cut edge. */
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  /* Directional THICKNESS: top/left catch light, bottom/right fall into
+     shadow — plus a low, soft drop so it floats without a heavy web shadow.
+     No blue glow ring. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 8px 24px rgba(0, 0, 0, 0.16);
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.research-more-glass:hover {
+  /* Slightly CLEARER / brighter glass — the blue body lifts a touch and the
+     top highlight strengthens. Nothing more: no scale, no glow, no size change. */
+  background-color: rgba(88, 155, 249, 0.66);
+  border-color: rgba(255, 255, 255, 0.30);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.40),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
